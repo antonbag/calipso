@@ -80,7 +80,7 @@ public class devCameraScript : MonoBehaviour
             
 
             //Keyboard commands
-            float f = 0.0f;
+            //float f = 0.0f;
             Vector3 p = GetBaseInput();
             if (p.sqrMagnitude > 0)
             { // only move while a direction key is pressed

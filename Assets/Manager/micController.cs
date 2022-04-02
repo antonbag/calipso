@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI; //for accessing Sliders and Dropdown
 using System.Collections.Generic; // So we can use List<>
+using UnityEngine.Audio; // So we can use AudioMixer
 
 [RequireComponent(typeof(AudioSource))]
 public class micController : MonoBehaviour
 {
-
+ 
     public float minThreshold = 0.0001f;
 	public float frequency = 0.0f;
 	public int audioSampleRate = 44100;
@@ -17,6 +18,21 @@ public class micController : MonoBehaviour
 	private List<string> options = new List<string>();
 	private int samples = 8192; 
 	private AudioSource audioSource;
+
+
+
+    public bool IsWorking = true;
+    bool _lastValueOfIsWorking;
+
+    public bool RaltimeOutput = true;
+    bool _lastValueOfRaltimeOutput;
+
+	float _lastVolume = 0;
+
+
+	//audiomixer para evitar reverb
+	public AudioMixer audioMixer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +50,7 @@ public class micController : MonoBehaviour
 		microphone = options[PlayerPrefsManager.GetMicrophone()];
 		minThreshold = PlayerPrefsManager.GetThreshold ();
 
-        Debug.Log(options);
+        //Debug.Log(options);
 
 		//add mics to dropdown
 		micDropdown.AddOptions(options);
@@ -48,14 +64,23 @@ public class micController : MonoBehaviour
 		});
 
 		//initialize input with default mic
-		UpdateMicrophone (); 
+		//UpdateMicrophone (); 
     }
 
 	void UpdateMicrophone(){
 		audioSource.Stop(); 
+		audioMixer.SetFloat ("Volume", -80.0f);
+		WorkStart();
+
+		
+
+		return;
+
+		/*
 		//Start recording to audioclip from the mic
 		audioSource.clip = Microphone.Start(microphone, true, 10, audioSampleRate);
 		audioSource.loop = true; 
+
 		// Mute the sound with an Audio Mixer group becuase we don't want the player to hear it
 		Debug.Log(Microphone.IsRecording(microphone).ToString());
 
@@ -67,12 +92,40 @@ public class micController : MonoBehaviour
 
 			// Start playing the audio source
 			audioSource.Play (); 
+
+
 		} else {
 			//microphone doesn't work for some reason
-
 			Debug.Log (microphone + " doesn't work!");
 		}
+		*/
 	}
+
+
+
+    public void WorkStart()
+    {
+        #if !UNITY_WEBGL
+                IsWorking = true;
+                audioSource.clip = Microphone.Start(microphone, true, 10, 44100);
+                audioSource.loop = true;
+                while (!(Microphone.GetPosition(microphone) > 0))
+                {
+					Debug.Log ("recording started with " + microphone);
+                    audioSource.Play();
+                }
+        #endif
+    }
+
+    public void WorkStop()
+    {
+        #if !UNITY_WEBGL
+                IsWorking = false;
+                Microphone.End(null);
+                audioSource.loop = false;
+        #endif
+    }
+
 
 
 	public void micDropdownValueChangedHandler(TMPro.TMP_Dropdown mic){

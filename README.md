@@ -7,6 +7,8 @@ Calipso is an interactive installation for MAVM 2021-22 created in Unity.
 **mariano anton báguena**
 
 - [x] Mic implementation
+- [ ] Sounbars
+- [ ] Record sounds
 - [ ] Translate, convert, interpretate sounds
 - [ ] Create orbs
 - [ ] Collisions

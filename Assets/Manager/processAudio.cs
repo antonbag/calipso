@@ -11,29 +11,38 @@ public class processAudio : MonoBehaviour
 	public Slider sensitivitySlider;
 
     // initialize spectrum array
+    public GameObject soundBar;
 
     void Start()
     {
-
+        //Get power from prefs
         powerMultiplier = PlayerPrefsManager.GetSensitivity ();
 
-        //Cambio de sensibilidad
+        //change sensivility (in component) to settings slider
 		sensitivitySlider.onValueChanged.AddListener(delegate {
 			SensitivityValueChangedHandler(sensitivitySlider);
 		});
 
+        //create the spectrum array (based on defined samples)
         float[] spectrum = new float[numberOfSamples];
+
+    
+
+      
     }
 
-    // Update is called once per frame
+
     void Update()
     {   
-        // initialize spectrum array
+        // initialize spectrum array every frame (for debuging )
 		float[] spectrum = new float[numberOfSamples];
 
         // populate array with fequency spectrum data
+        //the magic happens here
 		GetComponent<AudioSource>().GetSpectrumData(spectrum, 0, fftWindow);
 
+        soundBar.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 1000*spectrum[0]*powerMultiplier);;   
+  
         Debug.Log(spectrum[0]);
 
     }

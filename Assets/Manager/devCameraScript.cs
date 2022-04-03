@@ -5,7 +5,7 @@ using Unity.CALIPSO;
 
 public class devCameraScript : MonoBehaviour
 {
-    CalipsoManager cm;  
+    calipsoManager cm;  
     private Camera devCam;
 
     public float mainSpeed = 4.0f; //regular speed
@@ -24,7 +24,7 @@ public class devCameraScript : MonoBehaviour
 
     void Awake() {
         //cm = GameObject.Find("CalipsoManager").GetComponent<CalipsoManager>();
-        cm =  FindObjectOfType<CalipsoManager>();
+        cm =  FindObjectOfType<calipsoManager>();
         devCam = this.GetComponentInParent<Camera>();
 
         devCam.CopyFrom(Camera.main);

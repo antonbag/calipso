@@ -10,7 +10,7 @@ public class settingController : MonoBehaviour
 	public GameObject canvasSetting;
 	//public GameObject openButton;
 
-    private CalipsoManager cm;  
+    private calipsoManager cm;  
 
  	private bool panelActive = false;
 
@@ -18,7 +18,7 @@ public class settingController : MonoBehaviour
 
     void Awake() {
         //cm = GameObject.Find("CalipsoManager").GetComponent<CalipsoManager>();
-        cm =  FindObjectOfType<CalipsoManager>();
+        cm =  FindObjectOfType<calipsoManager>();
     }
 
 	// Use this for initialization

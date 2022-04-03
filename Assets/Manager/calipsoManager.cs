@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.CALIPSO{
 
-    public class CalipsoManager : MonoBehaviour
+    public class calipsoManager : MonoBehaviour
     {
 
         [Header("Options")] [Tooltip("Generic options to Calipso Game Manager")]

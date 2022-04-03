@@ -7,23 +7,23 @@ using UnityEngine.Audio; // So we can use AudioMixer
 
 namespace Unity.CALIPSO.MIC{
 
-	
+
 	[RequireComponent(typeof(AudioSource))]
 	public class micController : MonoBehaviour
 	{
 	
+	    [Range(64,8192)] public int numberOfSamples = 64; //step by 2
 		public float minThreshold = 0.0001f;
 		public float frequency = 0.0f;
 		public int audioSampleRate = 44100;
 		public string microphone;
 		public FFTWindow fftWindow;
-		public TMPro.TMP_Dropdown micDropdown;
+		public TMPro.TMP_Dropdown micDropdown, numSampleDropdown;
 		public Slider thresholdSlider;
 
 		private List<string> options = new List<string>();
-		private int samples = 512; 
+		private int samples = 128; 
 		private AudioSource _audioSource;
-
 
 
 		public bool IsWorking = true;
@@ -36,9 +36,6 @@ namespace Unity.CALIPSO.MIC{
 
 		//audiomixer para evitar reverb
 		public AudioMixer audioMixer;
-
-
-
 
 
 
@@ -59,10 +56,9 @@ namespace Unity.CALIPSO.MIC{
 			microphone = options[PlayerPrefsManager.GetMicrophone()];
 			minThreshold = PlayerPrefsManager.GetThreshold ();
 
-			//Debug.Log(options);
-
 			//add mics to dropdown
 			micDropdown.AddOptions(options);
+
 
 			micDropdown.onValueChanged.AddListener(delegate {
 				micDropdownValueChangedHandler(micDropdown);
@@ -71,6 +67,12 @@ namespace Unity.CALIPSO.MIC{
 			thresholdSlider.onValueChanged.AddListener(delegate {
 				thresholdValueChangedHandler(thresholdSlider);
 			});
+
+			numSampleDropdown.onValueChanged.AddListener(delegate {
+				numSamplesDropdownValueChangedHandler(numSampleDropdown);
+			});
+
+
 
 			//initialize input with default mic
 			//UpdateMicrophone (); 
@@ -84,6 +86,8 @@ namespace Unity.CALIPSO.MIC{
 			audioMixer.SetFloat ("Volume", -80.0f);
 
 			WorkStart();
+
+			Debug.Log(PlayerPrefsManager.getSamples());
 
 			return;
 
@@ -122,7 +126,7 @@ namespace Unity.CALIPSO.MIC{
 					_audioSource.loop = true;
 					while (!(Microphone.GetPosition(microphone) > 0))
 					{
-						Debug.Log ("recording started with " + microphone);
+						//Debug.Log ("recording started with " + microphone);
 						_audioSource.Play();
 					}
 			#endif
@@ -138,9 +142,37 @@ namespace Unity.CALIPSO.MIC{
 		}
 
 
-
 		public void micDropdownValueChangedHandler(TMPro.TMP_Dropdown mic){
 			microphone = options[mic.value];
+			UpdateMicrophone ();
+		}
+
+
+		public void numSamplesDropdownValueChangedHandler(TMPro.TMP_Dropdown numSample){
+			WorkStop();
+			IsWorking = false;
+			switch (numSample.value) {
+				case 0:
+					samples = 64;
+					break;
+				case 1:	
+					samples = 128;
+					break;
+				case 2:
+					samples = 256;
+					break;
+				case 3:
+					samples = 512;
+					break;
+				case 4:	
+					samples = 1024;
+					break;
+				default:
+					samples = 128;
+					break;
+			}
+			Debug.Log("samples: " + samples);
+			PlayerPrefsManager.SetSamples(samples);
 			UpdateMicrophone ();
 		}
 
@@ -151,7 +183,19 @@ namespace Unity.CALIPSO.MIC{
 
 
 
-	void Update()
+
+		public int checkSamplesRange(){
+			//check samples
+			if(numberOfSamples % 64 != 0){
+				numberOfSamples = 64;
+			}
+			if(numberOfSamples <= 63) numberOfSamples = 64;
+			if(numberOfSamples >= 8193) numberOfSamples = 8192;
+			return numberOfSamples;
+		}
+
+
+		void Update()
 		{
 
 

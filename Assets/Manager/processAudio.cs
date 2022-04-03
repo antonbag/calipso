@@ -5,9 +5,11 @@ using Unity.CALIPSO.MIC;
 
 
 public class processAudio : MonoBehaviour
-    {
+{
+        //control from settings. public to get it in real time from soundbarManager
         [Range(1, 1000)] public float powerMultiplier;
-        [Range(64,8192)] public int numberOfSamples = 96; //step by 2
+  
+        private int _numberOfSamples;
 
         private AudioSource _audioSource;
         private FFTWindow fftWindow;
@@ -41,11 +43,16 @@ public class processAudio : MonoBehaviour
                 SensitivityValueChangedHandler(sensitivitySlider);
             });
 
-            //create the spectrum array (based on defined samples)
-            float[] spectrum = new float[numberOfSamples];
+
 
             mic = gameObject.GetComponent<micController>();
             _audioSource = gameObject.GetComponent<AudioSource>();
+
+                        //check the number of samples
+            _numberOfSamples = mic.checkSamplesRange();
+
+            //create the spectrum array (based on defined samples)
+            float[] spectrum = new float[_numberOfSamples];
 
         
 
@@ -55,9 +62,15 @@ public class processAudio : MonoBehaviour
 
         void Update()
         {   
-            // initialize spectrum array every frame (for debuging )
+
+            //check the number of samples
+            _numberOfSamples = mic.checkSamplesRange();
+
+            Debug.Log(_numberOfSamples);
+
+            // initialize spectrum array every frame
             //DEV
-            float[] spectrum = new float[numberOfSamples];
+            float[] spectrum = new float[_numberOfSamples];
 
             //relleno el espectrum
             _audioSource.GetSpectrumData(spectrum, 0, FFTWindow.Hamming);
@@ -68,7 +81,7 @@ public class processAudio : MonoBehaviour
             //obtengo el volumen cada secundo
             if (Time.time > nextActionTime ) {
                 nextActionTime += periodo;
-                Debug.Log (GetAveragedVolume());
+                //Debug.Log (GetAveragedVolume());
             }
 
 
@@ -84,9 +97,6 @@ public class processAudio : MonoBehaviour
         public void SensitivityValueChangedHandler(Slider sensitivitySlider){
             powerMultiplier = sensitivitySlider.value;
         }
-
-
-
 
         //VOLUMEN
         public float GetAveragedVolume()
@@ -137,6 +147,5 @@ public class processAudio : MonoBehaviour
 
 
 
-
-    }
+}
 

@@ -6,6 +6,7 @@ using Unity.CALIPSO;
 public class settingController : MonoBehaviour
 {
 	public TMPro.TMP_Dropdown microphone;
+	public TMPro.TMP_Dropdown numSamplesDropdown;
 	public Slider sensitivitySlider, thresholdSlider;
 	public GameObject canvasSetting;
 	//public GameObject openButton;
@@ -26,13 +27,17 @@ public class settingController : MonoBehaviour
 		microphone.value = PlayerPrefsManager.GetMicrophone ();
 		sensitivitySlider.value = PlayerPrefsManager.GetSensitivity ();
 		thresholdSlider.value = PlayerPrefsManager.GetThreshold ();
+		numSamplesDropdown.value = PlayerPrefsManager.getSamples();
 	}
  
 	public void SaveAndExit (){
 		PlayerPrefsManager.SetMicrophone (microphone.value);
 		PlayerPrefsManager.SetSensitivity (sensitivitySlider.value);
 		PlayerPrefsManager.SetThreshold (thresholdSlider.value);
+		
+		//PlayerPrefsManager.SetSamples (numSamplesDropdown.value);
 
+	
 		//panelActive = !panelActive;
 		//canvasSetting.GetComponent<Animator> ().SetBool ("PanelActive",panelActive);
         Debug.Log("settingsMode: " + cm.settingsMode);

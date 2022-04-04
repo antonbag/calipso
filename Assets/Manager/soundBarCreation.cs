@@ -15,7 +15,7 @@ public class soundBarCreation : MonoBehaviour
     public GameObject soundBar;
     public GameObject SoundBarCanvas;
 
-    private bool soundBarActive = false;
+    private bool _soundBarActive = false;
     private calipsoManager cm;
     private micController mic;
 
@@ -66,9 +66,9 @@ public class soundBarCreation : MonoBehaviour
 
         optimizationLevel = PlayerPrefsManager.GetOptimizeSamples();
         //ya activo o no es dev mode!
-        if(soundBarActive || !cm.DevMode) return;
+        if(_soundBarActive || !cm.DevMode) return;
 
-        Debug.Log("*--createSoundBar--*"+soundBarActive.ToString());
+        Debug.Log("*--createSoundBar--*"+_soundBarActive.ToString());
 
         int totalBars = mic.checkSamplesRange()/ (int) optimizationLevel;
         int anchoBars = Screen.width/totalBars;
@@ -80,25 +80,27 @@ public class soundBarCreation : MonoBehaviour
             soundBarPrefab.GetComponent<soundBarManager>().currentWidth = anchoBars;
             soundBarPrefab.transform.SetParent (SoundBarCanvas.transform, false);
         }
-        soundBarActive = true;
+        _soundBarActive = true;
 
     }
 
+
+
     public void deleteSoundBar(){
 
-        Debug.Log("*--deleteSoundBar--*"+soundBarActive.ToString());
-        //ya desactivado!
-        if(!soundBarActive) return;
-        
-        Debug.Log("*--soundBarActive--*"+soundBarActive.ToString());
 
+        //ya desactivado!
+        if(!_soundBarActive) return;
+
+        Debug.Log("*--deleteSoundBar--*"+_soundBarActive.ToString());
+        
         int totalBars = mic.checkSamplesRange()/(int)optimizationLevel;
         int anchoBars = Screen.width/totalBars;
         foreach (Transform child in SoundBarCanvas.transform)
         {
             Destroy(child.gameObject);
         }
-        soundBarActive = false;
+        _soundBarActive = false;
 
     }
 

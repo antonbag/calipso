@@ -8,24 +8,25 @@ public class processAudio : MonoBehaviour
 {
         //control from settings. public to get it in real time from soundbarManager
         [Range(1, 1000)] public float powerMultiplier;
-  
-        private int _numberOfSamples;
-
-        private AudioSource _audioSource;
-        private FFTWindow fftWindow;
         public float lerpTime = 1;
-        public Slider sensitivitySlider;
 
-        // initialize spectrum array
-        public GameObject soundBar;
-        private micController mic;
+        public GameObject gmVolumeValue;
 
         public float[] spectrumData;
+        public float[] spectrumDataAnterior;
 
+        public float periodo = 1.0f;
+
+
+
+        private int _numberOfSamples;
+        private AudioSource _audioSource;
+        private FFTWindow fftWindow;
+
+        private micController mic;
 
         //cada cierto tiempo
         private float nextActionTime = 0.0f;
-        public float periodo = 1.0f;
 
 
 
@@ -46,10 +47,12 @@ public class processAudio : MonoBehaviour
             //create the spectrum array (based on defined samples)
             //float[] spectrum = new float[_numberOfSamples];
 
-                    
+            spectrumDataAnterior = new float[_numberOfSamples];
+            spectrumData = new float[_numberOfSamples];
+                     
         }
 
-
+ 
         void Update()
         {   
 
@@ -61,17 +64,32 @@ public class processAudio : MonoBehaviour
             // initialize spectrum array every frame
             //DEV
             float[] spectrum = new float[_numberOfSamples];
+            spectrumData = new float[_numberOfSamples];
 
             //relleno el espectrum
             _audioSource.GetSpectrumData(spectrum, 0, FFTWindow.Hamming);
+       
+            //OPERANDO!
+            //spectrumData = spectrum;
+            for(int i = 0; i < _numberOfSamples; i++){
 
-            spectrumData = spectrum;
+            
+                spectrumData[i] = spectrum[i]*(i/10);
 
+                //Debug.Log(spectrum[i]);
+        /*         if(spectrum[i] >=0.1f){
+                    spectrumData[i] = spectrum[i];
+                }else{
+                    spectrumData[i] = 1.0f;
+                } */
+            }
+     
+            
 
             //obtengo el volumen cada secundo
             if (Time.time > nextActionTime ) {
                 nextActionTime += periodo;
-                //Debug.Log (GetAveragedVolume());
+                gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = GetAveragedVolume().ToString();
             }
 
 

@@ -12,17 +12,18 @@ namespace Unity.CALIPSO.MIC{
 	public class micController : MonoBehaviour
 	{
 	
-	    [Range(64,8192)] public int numberOfSamples = 64; //step by 2
+	 	private int _numberOfSamples = 128;
 		public float minThreshold = 0.0001f;
+		private float _optimizeSample = 1.0f;
 		public float frequency = 0.0f;
 		public int audioSampleRate = 44100;
 		public string microphone;
 		public FFTWindow fftWindow;
 		public TMPro.TMP_Dropdown micDropdown, numSampleDropdown;
-		public Slider thresholdSlider;
+		public Slider thresholdSlider, sensitivitySlider, optimizeSampleSlider;
 
 		private List<string> options = new List<string>();
-		private int samples = 128; 
+		//private int samples = 128; 
 		private AudioSource _audioSource;
 
 
@@ -37,13 +38,15 @@ namespace Unity.CALIPSO.MIC{
 		//audiomixer para evitar reverb
 		public AudioMixer audioMixer;
 
-
+		private soundBarCreation sb;
 
 		// Start is called before the first frame update
 		void Start()
 		{
 			
 			_audioSource = GetComponent<AudioSource>();
+
+			sb = FindObjectOfType<soundBarCreation>();
 
 			//Listado de micrófonos disponibles
 			foreach (string device in Microphone.devices) {
@@ -55,6 +58,7 @@ namespace Unity.CALIPSO.MIC{
 			}
 			microphone = options[PlayerPrefsManager.GetMicrophone()];
 			minThreshold = PlayerPrefsManager.GetThreshold ();
+			_optimizeSample = PlayerPrefsManager.GetOptimizeSamples ();
 
 			//add mics to dropdown
 			micDropdown.AddOptions(options);
@@ -64,12 +68,17 @@ namespace Unity.CALIPSO.MIC{
 				micDropdownValueChangedHandler(micDropdown);
 			});
 
+			numSampleDropdown.onValueChanged.AddListener(delegate {
+				numSamplesDropdownValueChangedHandler(numSampleDropdown);
+			});
+
+
 			thresholdSlider.onValueChanged.AddListener(delegate {
 				thresholdValueChangedHandler(thresholdSlider);
 			});
 
-			numSampleDropdown.onValueChanged.AddListener(delegate {
-				numSamplesDropdownValueChangedHandler(numSampleDropdown);
+			optimizeSampleSlider.onValueChanged.AddListener(delegate {
+				optimizeSampleSliderValueChangedHandler(optimizeSampleSlider);
 			});
 
 
@@ -79,41 +88,19 @@ namespace Unity.CALIPSO.MIC{
 		}
 
 		void UpdateMicrophone(){
-			
+
+			Debug.Log("****UpdateMicrophone***");
+			sb.deleteSoundBar();
 			WorkStop();
 			
 			//pongo el audioMixer en off para que no se escuche reverb
 			audioMixer.SetFloat ("Volume", -80.0f);
 
 			WorkStart();
+			sb.createSoundBar();
 
-			Debug.Log(PlayerPrefsManager.getSamples());
+			//Debug.Log(PlayerPrefsManager.getSamples());
 
-			return;
-
-			/*
-			//Start recording to audioclip from the mic
-			audioSource.clip = Microphone.Start(microphone, true, 10, audioSampleRate);
-			audioSource.loop = true; 
-
-			// Mute the sound with an Audio Mixer group becuase we don't want the player to hear it
-			Debug.Log(Microphone.IsRecording(microphone).ToString());
-
-			if (Microphone.IsRecording (microphone)) { //check that the mic is recording, otherwise you'll get stuck in an infinite loop waiting for it to start
-				while (!(Microphone.GetPosition (microphone) > 0)) {
-				} // Wait until the recording has started. 
-			
-				Debug.Log ("recording started with " + microphone);
-
-				// Start playing the audio source
-				audioSource.Play (); 
-
-
-			} else {
-				//microphone doesn't work for some reason
-				Debug.Log (microphone + " doesn't work!");
-			}
-			*/
 		}
 
 
@@ -129,6 +116,7 @@ namespace Unity.CALIPSO.MIC{
 						//Debug.Log ("recording started with " + microphone);
 						_audioSource.Play();
 					}
+					
 			#endif
 		}
 
@@ -149,49 +137,45 @@ namespace Unity.CALIPSO.MIC{
 
 
 		public void numSamplesDropdownValueChangedHandler(TMPro.TMP_Dropdown numSample){
-			WorkStop();
-			IsWorking = false;
-			switch (numSample.value) {
-				case 0:
-					samples = 64;
-					break;
-				case 1:	
-					samples = 128;
-					break;
-				case 2:
-					samples = 256;
-					break;
-				case 3:
-					samples = 512;
-					break;
-				case 4:	
-					samples = 1024;
-					break;
-				default:
-					samples = 128;
-					break;
-			}
-			Debug.Log("samples: " + samples);
-			PlayerPrefsManager.SetSamples(samples);
-			UpdateMicrophone ();
-		}
 
+			int currentSamples = PlayerPrefsManager.getSamples();
+
+			int[] samplesArray = {64,128,256,512,1024,2048,4096,8192};
+			_numberOfSamples = samplesArray[numSample.value];
+
+			//Si ha cambiado, actualizo bars
+			if(currentSamples != _numberOfSamples){
+				Debug.Log("NUEVOS SAMPLES: " + _numberOfSamples);
+				PlayerPrefsManager.SetSamples(_numberOfSamples);
+				UpdateMicrophone();
+			}else{
+				Debug.Log("NO HAY CAMBIO EN samples: " + _numberOfSamples);
+			}
+
+			//UpdateMicrophone ();
+		}
+ 
 		public void thresholdValueChangedHandler(Slider thresholdSlider){
 			minThreshold = thresholdSlider.value;
 		}
-		
-
-
+		public void optimizeSampleSliderValueChangedHandler(Slider optimizeSampleSlider){
+			_optimizeSample = optimizeSampleSlider.value;
+			PlayerPrefsManager.SetOptimizeSamples(_optimizeSample);
+			UpdateMicrophone ();
+		}
 
 
 		public int checkSamplesRange(){
+
+			_numberOfSamples = PlayerPrefsManager.getSamples();
 			//check samples
-			if(numberOfSamples % 64 != 0){
-				numberOfSamples = 64;
+			if(_numberOfSamples % 64 != 0){
+				_numberOfSamples = 64;
 			}
-			if(numberOfSamples <= 63) numberOfSamples = 64;
-			if(numberOfSamples >= 8193) numberOfSamples = 8192;
-			return numberOfSamples;
+			if(_numberOfSamples <= 63) _numberOfSamples = 64;
+			if(_numberOfSamples >= 8193) _numberOfSamples = 8192;
+
+			return _numberOfSamples;
 		}
 
 
@@ -199,7 +183,7 @@ namespace Unity.CALIPSO.MIC{
 		{
 
 
-
+ 
 		}
 
 	}

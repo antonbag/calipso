@@ -10,7 +10,7 @@ public class soundBarCreation : MonoBehaviour
     private processAudio _processAudio;
     
     [Range(1, 100)]
-    public int optimizationLevel = 1;
+   private float optimizationLevel = 1.0f;
 
     public GameObject soundBar;
     public GameObject SoundBarCanvas;
@@ -39,9 +39,11 @@ public class soundBarCreation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //creare o destruiré desde el manager
+        /*
         //SOUNDBAR IN dev MODE
         if(cm.DevMode && !soundBarActive){
-             createSoundBar();
+            createSoundBar();
             soundBarActive = true;
         }
 
@@ -54,14 +56,21 @@ public class soundBarCreation : MonoBehaviour
             deleteSoundBar();
             soundBarActive = false;
         }
+        */
 
 
     }
 
 
-    void createSoundBar(){
+    public void createSoundBar(){
 
-        int totalBars = mic.checkSamplesRange()/optimizationLevel;
+        optimizationLevel = PlayerPrefsManager.GetOptimizeSamples();
+        //ya activo o no es dev mode!
+        if(soundBarActive || !cm.DevMode) return;
+
+        Debug.Log("*--createSoundBar--*"+soundBarActive.ToString());
+
+        int totalBars = mic.checkSamplesRange()/ (int) optimizationLevel;
         int anchoBars = Screen.width/totalBars;
 
         for(int i = 0; i < totalBars; i++){
@@ -71,17 +80,25 @@ public class soundBarCreation : MonoBehaviour
             soundBarPrefab.GetComponent<soundBarManager>().currentWidth = anchoBars;
             soundBarPrefab.transform.SetParent (SoundBarCanvas.transform, false);
         }
+        soundBarActive = true;
 
     }
 
-    void deleteSoundBar(){
+    public void deleteSoundBar(){
 
-        int totalBars = mic.checkSamplesRange()/optimizationLevel;
+        Debug.Log("*--deleteSoundBar--*"+soundBarActive.ToString());
+        //ya desactivado!
+        if(!soundBarActive) return;
+        
+        Debug.Log("*--soundBarActive--*"+soundBarActive.ToString());
+
+        int totalBars = mic.checkSamplesRange()/(int)optimizationLevel;
         int anchoBars = Screen.width/totalBars;
         foreach (Transform child in SoundBarCanvas.transform)
         {
             Destroy(child.gameObject);
         }
+        soundBarActive = false;
 
     }
 

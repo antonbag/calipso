@@ -22,8 +22,6 @@ public class processAudio : MonoBehaviour
 
         public float[] spectrumData;
 
-        float[] spectrum;
-
 
         //cada cierto tiempo
         private float nextActionTime = 0.0f;
@@ -38,25 +36,17 @@ public class processAudio : MonoBehaviour
             //Get power from prefs
             powerMultiplier = PlayerPrefsManager.GetSensitivity ();
 
-            //change sensivility (in component) to settings slider
-            sensitivitySlider.onValueChanged.AddListener(delegate {
-                SensitivityValueChangedHandler(sensitivitySlider);
-            });
-
-
 
             mic = gameObject.GetComponent<micController>();
             _audioSource = gameObject.GetComponent<AudioSource>();
 
-                        //check the number of samples
+            //check the number of samples
             _numberOfSamples = mic.checkSamplesRange();
 
             //create the spectrum array (based on defined samples)
-            float[] spectrum = new float[_numberOfSamples];
+            //float[] spectrum = new float[_numberOfSamples];
 
-        
-
-            
+                    
         }
 
 
@@ -66,7 +56,7 @@ public class processAudio : MonoBehaviour
             //check the number of samples
             _numberOfSamples = mic.checkSamplesRange();
 
-            Debug.Log(_numberOfSamples);
+            //Debug.Log(_numberOfSamples);
 
             // initialize spectrum array every frame
             //DEV
@@ -94,9 +84,7 @@ public class processAudio : MonoBehaviour
         }
 
 
-        public void SensitivityValueChangedHandler(Slider sensitivitySlider){
-            powerMultiplier = sensitivitySlider.value;
-        }
+ 
 
         //VOLUMEN
         public float GetAveragedVolume()

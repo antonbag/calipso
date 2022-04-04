@@ -16,8 +16,20 @@ namespace Unity.CALIPSO{
 
         public GameObject canvasSettings;
 
+        [Header("==Sound DEFAULTS==")]
 
-        //public static CalipsoManager instance;
+        public int samples = 256;
+        public int sensitivity = 500;
+        public float threshold = 0.5f;
+
+
+        void Awake(){
+            PlayerPrefsManager.SetSamples(samples);
+            PlayerPrefsManager.SetSensitivity(sensitivity);
+            Debug.Log(threshold);
+            if(threshold > 1f) threshold = 1f;
+            PlayerPrefsManager.SetThreshold(threshold); 
+        }
 
         // Start is called before the first frame update
         void Start()

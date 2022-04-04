@@ -7,7 +7,7 @@ public class settingController : MonoBehaviour
 {
 	public TMPro.TMP_Dropdown microphone;
 	public TMPro.TMP_Dropdown numSamplesDropdown;
-	public Slider sensitivitySlider, thresholdSlider;
+	public Slider sensitivitySlider, thresholdSlider, optimizeSampleSlider;
 	public GameObject canvasSetting;
 	//public GameObject openButton;
 
@@ -22,21 +22,21 @@ public class settingController : MonoBehaviour
         cm =  FindObjectOfType<calipsoManager>();
     }
 
-	// Use this for initialization
+	// INICIO LOS VALORES DE LOS SLIDERS
 	void Start () {
 		microphone.value = PlayerPrefsManager.GetMicrophone ();
 		sensitivitySlider.value = PlayerPrefsManager.GetSensitivity ();
 		thresholdSlider.value = PlayerPrefsManager.GetThreshold ();
-		numSamplesDropdown.value = PlayerPrefsManager.getSamples();
+		optimizeSampleSlider.value = 1.0f;
+		numSamplesDropdown.value = 2; //2=256
 	}
  
 	public void SaveAndExit (){
-		PlayerPrefsManager.SetMicrophone (microphone.value);
-		PlayerPrefsManager.SetSensitivity (sensitivitySlider.value);
-		PlayerPrefsManager.SetThreshold (thresholdSlider.value);
-		
+		//Lo guardo on the fly
+		//PlayerPrefsManager.SetMicrophone (microphone.value);
+		//PlayerPrefsManager.SetSensitivity (sensitivitySlider.value);
+		//PlayerPrefsManager.SetThreshold (thresholdSlider.value);
 		//PlayerPrefsManager.SetSamples (numSamplesDropdown.value);
-
 	
 		//panelActive = !panelActive;
 		//canvasSetting.GetComponent<Animator> ().SetBool ("PanelActive",panelActive);
@@ -49,6 +49,7 @@ public class settingController : MonoBehaviour
 		microphone.value = 0;
 		sensitivitySlider.value = 100f;
 		thresholdSlider.value = 0.001f;
+		optimizeSampleSlider.value = 1;
 	}
 
 	public void OpenSettings(){

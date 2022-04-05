@@ -70,10 +70,11 @@ public class soundBarCreation : MonoBehaviour
 
         Debug.Log("*--createSoundBar--*"+_soundBarActive.ToString());
 
+        //int totalBars = mic.checkSamplesRange();
         int totalBars = mic.checkSamplesRange()/ (int) optimizationLevel;
         int anchoBars = Screen.width/totalBars;
 
-        for(int i = 0; i < totalBars; i++){
+         for(int i = 0; i < totalBars; i++){
             GameObject soundBarPrefab = Instantiate(soundBar, new Vector3(anchoBars*i, 0, 0), Quaternion.identity) as GameObject;
             soundBarPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(anchoBars, 10);
             soundBarPrefab.GetComponent<soundBarManager>().arrayNumber = (mic.checkSamplesRange()/totalBars)*i;
@@ -94,8 +95,8 @@ public class soundBarCreation : MonoBehaviour
 
         Debug.Log("*--deleteSoundBar--*"+_soundBarActive.ToString());
         
-        int totalBars = mic.checkSamplesRange()/(int)optimizationLevel;
-        int anchoBars = Screen.width/totalBars;
+        //int totalBars = mic.checkSamplesRange()/(int)optimizationLevel;
+        //int anchoBars = Screen.width/totalBars;
         foreach (Transform child in SoundBarCanvas.transform)
         {
             Destroy(child.gameObject);

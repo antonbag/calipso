@@ -8,6 +8,7 @@ public class PlayerPrefsManager : MonoBehaviour {
 	const string SAMPLES_KEY 		= "samples";
 	const string OPTIMIZESAMPLES_KEY= "optimizeSamples";
 	const string THRESHOLD_KEY 		= "threshold";
+	const string LIMITFQ_KEY 		= "limitFq";
 
 	public static void SetMicrophone (int mic) {
 		PlayerPrefs.SetInt (MICROPHONE_KEY, mic);
@@ -39,6 +40,18 @@ public class PlayerPrefsManager : MonoBehaviour {
 
 	public static float GetThreshold (){
 		return PlayerPrefs.GetFloat (THRESHOLD_KEY);
+	}
+
+	public static void SetLimitFq (float limitFq) {
+		if (limitFq >= 0f && limitFq <= 1f) {
+			PlayerPrefs.SetFloat (LIMITFQ_KEY, limitFq);
+		} else {
+			Debug.LogError("limitFq "+limitFq.ToString()+" out of range");
+		}
+	}
+
+	public static float GetLimitFq (){
+		return PlayerPrefs.GetFloat (LIMITFQ_KEY);
 	}
 
 	public static void SetSamples (int samples) {

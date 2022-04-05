@@ -15,8 +15,10 @@ public class processAudio : MonoBehaviour
         public float[] spectrumData;
         public float[] spectrumDataAnterior;
 
-        public float periodo = 1.0f;
-
+        public float stepVolume = 1.0f;
+        public float stepMain = 0.05f;
+        private float _limitFq;
+    
 
 
         private int _numberOfSamples;
@@ -27,15 +29,17 @@ public class processAudio : MonoBehaviour
 
         //cada cierto tiempo
         private float nextActionTime = 0.0f;
-
+        private float currentUpdateTime = 0.0f;
 
 
         void Start()
         {
 
+            stepMain = 0.05f;
 
             //Get power from prefs
             powerMultiplier = PlayerPrefsManager.GetSensitivity ();
+            _limitFq = PlayerPrefsManager.GetLimitFq ();
 
 
             mic = gameObject.GetComponent<micController>();
@@ -56,43 +60,68 @@ public class processAudio : MonoBehaviour
         void Update()
         {   
 
-            //check the number of samples
-            _numberOfSamples = mic.checkSamplesRange();
-
-            //Debug.Log(_numberOfSamples);
-
-            // initialize spectrum array every frame
-            //DEV
-            float[] spectrum = new float[_numberOfSamples];
-            spectrumData = new float[_numberOfSamples];
-
-            //relleno el espectrum
-            _audioSource.GetSpectrumData(spectrum, 0, FFTWindow.Hamming);
-       
-            //OPERANDO!
-            //spectrumData = spectrum;
-            for(int i = 0; i < _numberOfSamples; i++){
-
-            
-                spectrumData[i] = spectrum[i]*(i/10);
-
-                //Debug.Log(spectrum[i]);
-        /*         if(spectrum[i] >=0.1f){
-                    spectrumData[i] = spectrum[i];
-                }else{
-                    spectrumData[i] = 1.0f;
-                } */
-            }
-     
-            
-
-            //obtengo el volumen cada secundo
+           //obtengo el volumen cada secundo
             if (Time.time > nextActionTime ) {
-                nextActionTime += periodo;
+                nextActionTime += stepVolume;
                 gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = GetAveragedVolume().ToString();
             }
 
+             //obtengo el volumen cada 0.05
+            currentUpdateTime += Time.deltaTime;
+            if(currentUpdateTime >= stepMain){
+                currentUpdateTime = 0f;
 
+                powerMultiplier = PlayerPrefsManager.GetSensitivity ();
+                _limitFq = PlayerPrefsManager.GetLimitFq ();
+                //check the number of samples
+                _numberOfSamples = mic.checkSamplesRange();
+
+
+                //Debug.Log(_numberOfSamples);
+
+                // initialize spectrum array every frame
+                //DEV
+                float[] spectrum = new float[_numberOfSamples];
+                spectrumData = new float[_numberOfSamples];
+
+
+                //relleno el espectrum
+                _audioSource.GetSpectrumData(spectrum, 0, fftWindow);
+        
+                //OPERANDO!
+                //spectrumData = spectrum;
+            
+                for(int i = 0; i < ((int) _numberOfSamples*_limitFq); i++){
+
+                    if(spectrumData[i] == 0) spectrumData[i] = 1f;
+                    
+
+                //raw
+                //spectrumData[i] = spectrum[i];
+
+                //1A aproximacion: media entre valor anterior y actual
+                spectrumData[i] = ((spectrum[i]*spectrumData[i])/2)*powerMultiplier;
+                
+        
+                }
+   
+
+            }
+
+
+
+            
+
+
+     
+            //StartCoroutine(getSpectrum());
+
+
+
+
+ 
+
+ 
 
             /*
             var audioScale = Mathf.Pow(spectrumData[i] * AudioScale, Power);
@@ -150,7 +179,18 @@ public class processAudio : MonoBehaviour
 
 
 
-
+    //CORUTINA PARA LE PROCESO DE AUDIO
+    //algo no estoy haciendo bien...
+    //TODO
+    IEnumerator getSpectrum(){
+        for(;;){
+            yield return new WaitForSeconds(2.0f);
+            float[] spectrum = new float[_numberOfSamples];
+            spectrumData = new float[_numberOfSamples];
+            _audioSource.GetSpectrumData(spectrum, 0, fftWindow);
+            spectrumData = spectrum;
+        }
+    }
 
 
 }

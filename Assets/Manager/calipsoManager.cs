@@ -14,23 +14,27 @@ namespace Unity.CALIPSO{
         private Camera mainCamera;
         private Camera devCamera;
 
+        private float _deltaTime;
+
         public GameObject canvasSettings;
+        public GameObject fpsController;
 
-        [Header("==Sound DEFAULTS==")]
+        /*
+                [Header("==Sound DEFAULTS==")]
 
-        public int samples = 256;
-        public int sensitivity = 500;
-        public float threshold = 0.5f;
+                public int samples = 256;
+                public int sensitivity = 500;
+                public float threshold = 0.5f;
 
 
-        void Awake(){
-            PlayerPrefsManager.SetSamples(samples);
-            PlayerPrefsManager.SetSensitivity(sensitivity);
-            Debug.Log(threshold);
-            if(threshold > 1f) threshold = 1f;
-            PlayerPrefsManager.SetThreshold(threshold); 
-        }
-
+                void Awake(){
+                    PlayerPrefsManager.SetSamples(samples);
+                    PlayerPrefsManager.SetSensitivity(sensitivity);
+                    if(threshold > 1f) threshold = 1f;
+                    PlayerPrefsManager.SetThreshold(threshold); 
+                }
+        */
+        
         // Start is called before the first frame update
         void Start()
         {   
@@ -39,13 +43,15 @@ namespace Unity.CALIPSO{
 
             canvasSettings.SetActive(false);
 
+            
+
             //Select the main camera depending on the dev mode
             ChangeCameras(this.DevMode);
         }
         // Update is called once per frame
         void Update()
         {
-            
+            _deltaTime += (Time.deltaTime - _deltaTime) * 0.1f;
             //Enter in Dev Mode
             if (Input.GetKeyDown(KeyCode.E))
             {
@@ -55,10 +61,17 @@ namespace Unity.CALIPSO{
                ChangeCameras(this.DevMode);
             }
 
+            /***************************************/
+            /************* DEV MODE ***************/
+            /***************************************/
+
             //what to do on dev mode
             if(this.DevMode)
             {
-                //things to do in dev mode
+                //FPSs
+                float fps = 1.0f / _deltaTime;
+                fpsController.GetComponent<TMPro.TextMeshProUGUI>().text = Mathf.Ceil (fps).ToString ();
+    
             }
 
             //OPEN/close SETTINGS
@@ -66,7 +79,9 @@ namespace Unity.CALIPSO{
             {
                exitSettings();
             }
- 
+
+
+
 
         }
         

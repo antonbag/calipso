@@ -9,7 +9,7 @@ namespace Unity.CALIPSO.MIC{
 
 
 	[RequireComponent(typeof(AudioSource))]
-	public class micController : MonoBehaviour
+	public class micControllerBK : MonoBehaviour
 	{
 	
 	 	private int _numberOfSamples = 128;
@@ -30,7 +30,7 @@ namespace Unity.CALIPSO.MIC{
 
 		public bool RaltimeOutput = true;
 		bool _lastValueOfRaltimeOutput;
- 
+
 
 		private soundBarCreation sb;
 		private settingController sc;
@@ -41,8 +41,11 @@ namespace Unity.CALIPSO.MIC{
 			
 			_audioSource = GetComponent<AudioSource>();
 
+
+
 			sc = FindObjectOfType<settingController>();
 			sb = FindObjectOfType<soundBarCreation>();
+
 
 
 			//initialize input with default mic
@@ -60,7 +63,7 @@ namespace Unity.CALIPSO.MIC{
 			audioMixer.SetFloat ("Volume", -80.0f);
 
 			WorkStart();
-			sb.createSoundBar();
+			//sb.createSoundBar();
 			
 			//Debug.Log(PlayerPrefsManager.getSamples());
 

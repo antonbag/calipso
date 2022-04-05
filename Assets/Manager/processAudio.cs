@@ -62,6 +62,7 @@ public class processAudio : MonoBehaviour
 
            //obtengo el volumen cada secundo
             if (Time.time > nextActionTime ) {
+                spectrumDataAnterior = spectrumData;
                 nextActionTime += stepVolume;
                 gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = GetAveragedVolume().ToString();
             }
@@ -75,7 +76,6 @@ public class processAudio : MonoBehaviour
                 _limitFq = PlayerPrefsManager.GetLimitFq ();
                 //check the number of samples
                 _numberOfSamples = mic.checkSamplesRange();
-
 
                 //Debug.Log(_numberOfSamples);
 
@@ -93,16 +93,24 @@ public class processAudio : MonoBehaviour
             
                 for(int i = 0; i < ((int) _numberOfSamples*_limitFq); i++){
 
-                    if(spectrumData[i] == 0) spectrumData[i] = 1f;
+                    if(spectrumData[i] == 0) spectrumData[i] = 0.1f;
                     
 
-                //raw
-                //spectrumData[i] = spectrum[i];
+                    //raw
+                    //spectrumData[i] = spectrum[i];
 
-                //1A aproximacion: media entre valor anterior y actual
-                spectrumData[i] = ((spectrum[i]*spectrumData[i])/2)*powerMultiplier;
-                
-        
+                    //1A aproximacion: media entre valor anterior y actual
+                    //spectrumData[i] = ((spectrum[i]*spectrumData[i])/2)*powerMultiplier;
+
+                    //2A aproximacion: clampear
+                    //spectrumData[i] = Mathf.Clamp(spectrum[i], 0,1)*powerMultiplier;
+
+                    //3A aproximacion: media con anterior
+                    //spectrumData[i] = (spectrum[i]+spectrumDataAnterior[i])/2;
+
+                    //3A aproximacion: media con anterior
+                    spectrumData[i] = Mathf.Clamp(((spectrum[i]*powerMultiplier+spectrumDataAnterior[i])/2), 0,1);
+       
                 }
    
 

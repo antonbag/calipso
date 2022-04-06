@@ -9,7 +9,7 @@ public class settingController : MonoBehaviour
 {	
 	
 	public TMPro.TMP_Dropdown micDropdown, numSamplesDropdown;
-	public Slider sensitivitySlider, thresholdSlider, optimizeSampleSlider, limitFqSlider;
+	public Slider sensitivitySlider, soundBiasSlider, thresholdSlider, optimizeSampleSlider, limitFqSlider;
 	public GameObject canvasSetting;
 	//public GameObject openButton;
 
@@ -27,6 +27,7 @@ public class settingController : MonoBehaviour
 
 	public int numberOfSamples = 128;
 	public float sensitivity = 500.0f;
+	public float soundBias = 0.5f;
 	public float threshold = 0.5f;
 	public float optimizeSample = 1.0f;
 	public float limitFq = 1.0f;
@@ -59,6 +60,7 @@ public class settingController : MonoBehaviour
 		micDropdown.onValueChanged.AddListener(delegate {micDropdownValueChangedHandler(micDropdown);});
 		numSamplesDropdown.onValueChanged.AddListener(delegate {numSamplesDropdownValueChangedHandler(numSamplesDropdown);});
 		sensitivitySlider.onValueChanged.AddListener(delegate {sensitivityValueChangedHandler(sensitivitySlider);});
+		soundBiasSlider.onValueChanged.AddListener(delegate {soundBiasValueChangedHandler(soundBiasSlider);});
 		thresholdSlider.onValueChanged.AddListener(delegate {thresholdValueChangedHandler(thresholdSlider);});
 		optimizeSampleSlider.onValueChanged.AddListener(delegate {optimizeSampleSliderValueChangedHandler(optimizeSampleSlider);});
 		limitFqSlider.onValueChanged.AddListener(delegate {limitFqSliderValueChangedHandler(limitFqSlider);});
@@ -83,6 +85,7 @@ public class settingController : MonoBehaviour
 	public void SetDefaults(){
 		micDropdown.value = 0;
 		sensitivitySlider.value = 100f;
+		soundBiasSlider.value = 0.5f;
 		thresholdSlider.value = 0.001f;
 		optimizeSampleSlider.value = 1;
 		numSamplesDropdown.value = 2; //1=128, 2=256, 3=512, 4=1024, 5=2048
@@ -143,6 +146,13 @@ public class settingController : MonoBehaviour
 		sensitivity = SensitivitySlider.value;
 		PlayerPrefsManager.SetSensitivity(sensitivity);
 	}
+	
+	//SOUNDBIAS
+	public void soundBiasValueChangedHandler(Slider soundBiasSlider){
+		soundBias = soundBiasSlider.value;
+		PlayerPrefsManager.SetSoundBias(soundBias);
+	}
+	
 	//THRESHOLD
 	public void thresholdValueChangedHandler(Slider thresholdSlider){
 		threshold = thresholdSlider.value;

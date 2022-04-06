@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Unity.CALIPSO;
 using Unity.CALIPSO.MIC;
 
 
@@ -26,14 +27,18 @@ public class processAudio : MonoBehaviour
         private FFTWindow fftWindow;
 
         private micController mic;
+        private calipsoManager cm;
 
         //cada cierto tiempo
         private float nextActionTime = 0.0f;
         private float currentUpdateTime = 0.0f;
 
+        [Range(0, 10)] public float ponderacionPOW=0.5f;
+        [Range(0, 10)] public float amplitudPOW=0.5f;
 
         void Start()
         {
+            cm =  FindObjectOfType<calipsoManager>();
 
             stepMain = 0.05f;
 
@@ -53,12 +58,16 @@ public class processAudio : MonoBehaviour
 
             spectrumDataAnterior = new float[_numberOfSamples];
             spectrumData = new float[_numberOfSamples];
+
+            float ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
                      
         }
 
  
         void Update()
         {   
+            
+
 
            //obtengo el volumen cada secundo
             if (Time.time > nextActionTime ) {
@@ -67,7 +76,7 @@ public class processAudio : MonoBehaviour
                 gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = GetAveragedVolume().ToString();
             }
 
-             //obtengo el volumen cada 0.05
+            //obtengo el volumen cada 0.05
             currentUpdateTime += Time.deltaTime;
             if(currentUpdateTime >= stepMain){
                 currentUpdateTime = 0f;
@@ -77,7 +86,7 @@ public class processAudio : MonoBehaviour
                 //check the number of samples
                 _numberOfSamples = mic.checkSamplesRange();
 
-                //Debug.Log(_numberOfSamples);
+                ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
 
                 // initialize spectrum array every frame
                 //DEV
@@ -90,12 +99,19 @@ public class processAudio : MonoBehaviour
         
                 //OPERANDO!
                 //spectrumData = spectrum;
-            
-                for(int i = 0; i < ((int) _numberOfSamples*_limitFq); i++){
+
+                //samples limitados
+                int _samplesLimited =  (int)(_numberOfSamples * _limitFq);
+
+ 
+          
+                for(int i = 0; i < _samplesLimited; i++){
 
                     if(spectrumData[i] == 0) spectrumData[i] = 0.1f;
                     
+                    float miSino = Mathf.Sin(i);
 
+                       
                     //raw
                     //spectrumData[i] = spectrum[i];
 
@@ -108,8 +124,22 @@ public class processAudio : MonoBehaviour
                     //3A aproximacion: media con anterior
                     //spectrumData[i] = (spectrum[i]+spectrumDataAnterior[i])/2;
 
-                    //3A aproximacion: media con anterior
-                    spectrumData[i] = Mathf.Clamp(((spectrum[i]*powerMultiplier+spectrumDataAnterior[i])/2), 0,1);
+                    //4A aproximacion: media con anterior
+                    //spectrumData[i] = Mathf.Clamp(((spectrum[i]*powerMultiplier+spectrumDataAnterior[i])/2), 0,1);
+
+                    //5A aproximacion: sino
+                    //spectrumData[i] = Mathf.Clamp(((spectrum[i]*powerMultiplier+spectrumDataAnterior[i])/2)*miSino, 0,1);
+  
+                    //MAPEO DE Samples
+                    float mapeo = cm.mapToDigital(i, 0, _samplesLimited, 0, 1);
+                    float balanceo = (Mathf.Pow(mapeo, ponderacionPOW)) * amplitudPOW;
+
+                    if(i%4 == 0){
+                        //MUESTRO EL BALANCEO
+                        spectrumData[i] = balanceo/5;
+                    }else{
+                        spectrumData[i] = (spectrum[i]*balanceo)*powerMultiplier;
+                    }
        
                 }
    

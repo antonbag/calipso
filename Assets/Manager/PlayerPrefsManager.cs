@@ -5,6 +5,7 @@ public class PlayerPrefsManager : MonoBehaviour {
 
 	const string MICROPHONE_KEY 	= "microphone";
 	const string SENSITIVITY_KEY 	= "sensitivity";
+	const string SOUNDBIAS_KEY 		= "soundBias";
 	const string SAMPLES_KEY 		= "samples";
 	const string OPTIMIZESAMPLES_KEY= "optimizeSamples";
 	const string THRESHOLD_KEY 		= "threshold";
@@ -28,6 +29,18 @@ public class PlayerPrefsManager : MonoBehaviour {
 
 	public static float GetSensitivity (){
 		return PlayerPrefs.GetFloat (SENSITIVITY_KEY);
+	}
+
+	public static void SetSoundBias (float soundBias) {
+		if (soundBias >= 0f && soundBias <= 10f) {
+			PlayerPrefs.SetFloat (SOUNDBIAS_KEY, soundBias);
+		} else {
+			Debug.LogError("soundBias out of range");
+		}
+	}
+
+	public static float GetSoundBias (){
+		return PlayerPrefs.GetFloat (SOUNDBIAS_KEY);
 	}
 
 	public static void SetThreshold (float threshold) {

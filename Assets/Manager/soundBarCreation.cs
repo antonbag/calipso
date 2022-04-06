@@ -13,6 +13,7 @@ public class soundBarCreation : MonoBehaviour
    private float optimizationLevel = 1.0f;
 
     public GameObject soundBar;
+    public GameObject soundBarBias;
     public GameObject SoundBarCanvas;
 
     private bool _soundBarActive = false;
@@ -72,15 +73,33 @@ public class soundBarCreation : MonoBehaviour
 
         //int totalBars = mic.checkSamplesRange();
         int totalBars = mic.checkSamplesRange()/ (int) optimizationLevel;
-        int anchoBars = Screen.width/totalBars;
+        int anchoBars = (Screen.width/totalBars);
 
-         for(int i = 0; i < totalBars; i++){
+        //TODO
+
+        for(int i = 0; i < totalBars; i++){
             GameObject soundBarPrefab = Instantiate(soundBar, new Vector3(anchoBars*i, 0, 0), Quaternion.identity) as GameObject;
             soundBarPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(anchoBars, 10);
             soundBarPrefab.GetComponent<soundBarManager>().arrayNumber = (mic.checkSamplesRange()/totalBars)*i;
             soundBarPrefab.GetComponent<soundBarManager>().currentWidth = anchoBars;
             soundBarPrefab.transform.SetParent (SoundBarCanvas.transform, false);
         }
+
+
+
+        for(int i = 0; i < totalBars/4; i++){
+            GameObject soundBarBiasPrefab = Instantiate(soundBar, new Vector3(anchoBars*i, 0, 0), Quaternion.identity) as GameObject;
+            soundBarBiasPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(anchoBars, 10);
+            soundBarBiasPrefab.GetComponent<soundBarManager>().arrayNumber = (mic.checkSamplesRange()/totalBars)*i;
+            soundBarBiasPrefab.GetComponent<soundBarManager>().currentWidth = anchoBars;
+            soundBarBiasPrefab.transform.SetParent (SoundBarCanvas.transform, false);
+            soundBarBiasPrefab.name="SoundBarBias";
+        }
+
+
+
+
+
         _soundBarActive = true;
 
     }

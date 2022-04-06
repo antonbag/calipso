@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*****  cada bar *****/
 
@@ -15,10 +16,11 @@ public class soundBarManager : MonoBehaviour
     public int arrayNumber;
     public int currentWidth;
 
+    private float valorAnterior;
+
     void Awake() {
         //cm = GameObject.Find("CalipsoManager").GetComponent<CalipsoManager>();
-      
-
+ 
     }
 
     // Start is called before the first frame update
@@ -37,10 +39,38 @@ public class soundBarManager : MonoBehaviour
            //Debug.Log(_processAudio.spectrumData[arrayNumber]);
 
             //Debug.Log(arrayNumber);
-            GetComponent<RectTransform>().sizeDelta = new Vector2(
-                currentWidth,
-                _processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
-            );
+            //IMAGES
+
+
+
+            if(gameObject.name=="SoundBarBias"){
+                Debug.Log(gameObject.name);
+                GetComponent<RectTransform>().sizeDelta = new Vector2(
+                        1,
+                        _processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
+                );
+                GetComponent<Image>().color = new Color(
+                    1,
+                    1,
+                    1,
+                    0.2f
+                );
+            }else{
+                Debug.Log(gameObject.name);
+                GetComponent<RectTransform>().sizeDelta = new Vector2(
+                    currentWidth,
+                    _processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
+                );
+        
+            }
+
+         
+
+            valorAnterior = _processAudio.spectrumData[arrayNumber];
+   
+            //_processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
+            
+
 
             //soundBarPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(_processAudio.spectrumData[arrayNumber], 10);
         }

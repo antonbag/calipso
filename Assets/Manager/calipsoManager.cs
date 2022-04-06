@@ -104,7 +104,14 @@ namespace Unity.CALIPSO{
 
         }
 
+        /** map calculation como en p5 **/
+        public float mapToDigital(float value, float min1, float max1, float min2, float max2){
 
+            float normalizedValue = Mathf.InverseLerp(min1, max1, value);
+            float result = Mathf.Lerp(min2, max2, normalizedValue);
+
+            return result;
+        }
         
 
     }

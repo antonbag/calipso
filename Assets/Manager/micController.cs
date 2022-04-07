@@ -44,7 +44,6 @@ namespace Unity.CALIPSO.MIC{
 			sc = FindObjectOfType<settingController>();
 			sb = FindObjectOfType<soundBarCreation>();
 
-
 			//initialize input with default mic
 			UpdateMicrophone (); 
 		}
@@ -54,6 +53,7 @@ namespace Unity.CALIPSO.MIC{
 			Debug.Log("----------****UpdateMicrophone***------------");
 			
 			sb.deleteSoundBar();
+
 			WorkStop();
 			
 			//pongo el audioMixer en off para que no se escuche reverb

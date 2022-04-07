@@ -39,34 +39,21 @@ public class soundBarManager : MonoBehaviour
            //Debug.Log(_processAudio.spectrumData[arrayNumber]);
 
             //Debug.Log(arrayNumber);
-            //IMAGES
+            //IMAGES 
 
+  
+            GetComponent<RectTransform>().sizeDelta = new Vector2(
+                currentWidth,
+                _processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
+            );
 
+            
+            valorAnterior = _processAudio.spectrumData[arrayNumber];
 
-            if(gameObject.name=="SoundBarBias"){
-                Debug.Log(gameObject.name);
-                GetComponent<RectTransform>().sizeDelta = new Vector2(
-                        1,
-                        _processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
-                );
-                GetComponent<Image>().color = new Color(
-                    1,
-                    1,
-                    1,
-                    0.2f
-                );
-            }else{
-                Debug.Log(gameObject.name);
-                GetComponent<RectTransform>().sizeDelta = new Vector2(
-                    currentWidth,
-                    _processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
-                );
-        
-            }
 
          
 
-            valorAnterior = _processAudio.spectrumData[arrayNumber];
+            
    
             //_processAudio.spectrumData[arrayNumber]*(_processAudio.powerMultiplier*10)
             
@@ -76,4 +63,9 @@ public class soundBarManager : MonoBehaviour
         }
         
     }
+
+
+
+
+
 }

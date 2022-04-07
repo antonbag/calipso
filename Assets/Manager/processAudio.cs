@@ -14,6 +14,7 @@ public class processAudio : MonoBehaviour
         public GameObject gmVolumeValue;
 
         public float[] spectrumData;
+        public float[] spectrumDataBalanceo;
         public float[] spectrumDataAnterior;
 
         public float stepVolume = 1.0f;
@@ -58,6 +59,7 @@ public class processAudio : MonoBehaviour
 
             spectrumDataAnterior = new float[_numberOfSamples];
             spectrumData = new float[_numberOfSamples];
+            spectrumDataBalanceo = new float[_numberOfSamples];
 
             float ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
                      
@@ -92,6 +94,7 @@ public class processAudio : MonoBehaviour
                 //DEV
                 float[] spectrum = new float[_numberOfSamples];
                 spectrumData = new float[_numberOfSamples];
+                spectrumDataBalanceo = new float[_numberOfSamples];
 
 
                 //relleno el espectrum
@@ -134,13 +137,20 @@ public class processAudio : MonoBehaviour
                     float mapeo = cm.mapToDigital(i, 0, _samplesLimited, 0, 1);
                     float balanceo = (Mathf.Pow(mapeo, ponderacionPOW)) * amplitudPOW;
 
-                    if(i%4 == 0){
-                        //MUESTRO EL BALANCEO
-                        spectrumData[i] = balanceo/5;
-                    }else{
-                        spectrumData[i] = (spectrum[i]*balanceo)*powerMultiplier;
+
+                    //MUESTRO EL BALANCEO
+                    //spectrumDataBalanceo[i] = balanceo/5;
+
+           
+                    //spectrumData[i] = (spectrum[i]*balanceo)*powerMultiplier;
+
+                    if(i % 4 == 0){
+                        spectrumDataBalanceo[i] = balanceo/5;
                     }
-       
+                   
+
+                    spectrumData[i] = (spectrum[i]*balanceo)*powerMultiplier;
+      
                 }
    
 

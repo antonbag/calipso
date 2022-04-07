@@ -64,9 +64,10 @@ public class settingController : MonoBehaviour
 		thresholdSlider.onValueChanged.AddListener(delegate {thresholdValueChangedHandler(thresholdSlider);});
 		optimizeSampleSlider.onValueChanged.AddListener(delegate {optimizeSampleSliderValueChangedHandler(optimizeSampleSlider);});
 		limitFqSlider.onValueChanged.AddListener(delegate {limitFqSliderValueChangedHandler(limitFqSlider);});
-		
 
 	}
+
+
  
 	public void SaveAndExit (){
 		//Lo guardo on the fly
@@ -178,7 +179,6 @@ public class settingController : MonoBehaviour
 	public string getMicrophone(){
 		return _microphone;
 	}
-
 
 
 }

@@ -38,7 +38,7 @@ public class soundBarBiasManager : MonoBehaviour
         if(_processAudio.spectrumDataBalanceo.Length > 0){
 
             GetComponent<RectTransform>().sizeDelta = new Vector2(
-                    currentWidth,
+                    currentWidth/2,
                     _processAudio.spectrumDataBalanceo[arrayNumber]*(_processAudio.powerMultiplier*10)
             );
             GetComponent<Image>().color = new Color(

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.CALIPSO;
 using Unity.CALIPSO.MIC;
 
@@ -89,7 +90,7 @@ public class soundBarCreation : MonoBehaviour
     }
 
 
-
+    /**SOUNDBARCREATION**/
     public void instantiateSoundBar(){
 
         optimizationLevel = PlayerPrefsManager.GetOptimizeSamples();
@@ -102,14 +103,52 @@ public class soundBarCreation : MonoBehaviour
         int totalBars = mic.checkSamplesRange() / (int) optimizationLevel;
         int anchoBars = (Screen.width/totalBars);
 
+        int fundamentalWidth = totalBars/8;
+        int totalFundamental = totalBars/8;
 
+        Debug.Log("totalFundamental: "+totalFundamental);
+        Debug.Log("totalBars: "+totalBars);
+
+
+        int fundContador = 0;
+        //NORMAL SPECTRUM
         for(int i = 0; i < totalBars; i++){
+
             GameObject soundBarPrefab = Instantiate(soundBar, new Vector3(anchoBars*i, 0, 0), Quaternion.identity) as GameObject;
             soundBarPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(anchoBars, 10);
             soundBarPrefab.GetComponent<soundBarManager>().arrayNumber = (mic.checkSamplesRange()/totalBars)*i;
             soundBarPrefab.GetComponent<soundBarManager>().currentWidth = anchoBars;
+
             soundBarPrefab.transform.SetParent (SoundBarCanvas.transform, false);
+
+
+            if(i % totalFundamental == 0){
+
+                GameObject soundBarPrefabFundamental = Instantiate(soundBar, new Vector3(fundamentalWidth*fundContador, 0, 0), Quaternion.identity) as GameObject;
+                soundBarPrefabFundamental.name = "fundamental";
+                soundBarPrefabFundamental.GetComponent<RectTransform>().sizeDelta = new Vector2(fundamentalWidth, 10);
+                soundBarPrefabFundamental.GetComponent<soundBarManager>().arrayNumber = fundContador;
+                soundBarPrefabFundamental.GetComponent<soundBarManager>().currentWidth = fundamentalWidth;
+                soundBarPrefabFundamental.GetComponent<Image>().color = new Color(
+                    0,
+                    1,
+                    0,
+                    0.5f
+                );
+
+                Debug.Log(soundBarPrefabFundamental.name);
+                soundBarPrefabFundamental.transform.SetParent (SoundBarCanvas.transform, false);  
+
+                fundContador += 1;
+            }
+
+
         }
+
+        //FUNDAMENTAL SPECTRUM
+
+
+
         _soundBarActive = true;
 
     }
@@ -127,11 +166,14 @@ public class soundBarCreation : MonoBehaviour
         int anchoBars = (Screen.width/totalBars);
 
         for(int i = 0; i < totalBars; i++){
+            if(i%4 == 0){
             GameObject soundBarBiasPrefab = Instantiate(soundBarBias, new Vector3(anchoBars*i, 0, 0), Quaternion.identity) as GameObject;
             soundBarBiasPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(anchoBars, 10);
-            soundBarBiasPrefab.GetComponent<soundBarBiasManager>().arrayNumber = i;
+            soundBarBiasPrefab.GetComponent<soundBarBiasManager>().arrayNumber = (mic.checkSamplesRange()/totalBars)*i;
             soundBarBiasPrefab.GetComponent<soundBarBiasManager>().currentWidth = anchoBars;
             soundBarBiasPrefab.transform.SetParent (SoundBarBiasCanvas.transform, false);
+            }
+
         }
         _soundBarBiasActive = true;
 
@@ -139,7 +181,7 @@ public class soundBarCreation : MonoBehaviour
 
 
 
-
+    /**SOUNDBAR DESTRUCCION**/
     public void destroyInstancesSoundBar(){
 
 
@@ -158,7 +200,7 @@ public class soundBarCreation : MonoBehaviour
 
     }
 
-
+    /**BIAS DESTRUCCION**/
     public void destroyInstancesSoundBarBias(){
 
 

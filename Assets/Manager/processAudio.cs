@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 using Unity.CALIPSO;
 using Unity.CALIPSO.MIC;
 
@@ -17,10 +15,36 @@ public class processAudio : MonoBehaviour
         public float[] spectrumDataBalanceo;
         public float[] spectrumDataAnterior;
 
+
+        //fundamental frequencies
+        public float[] fundamentalSpectrum = new float[8];
+        public float[] f0 = new float[0];
+        public float[] f1 = new float[0];
+        public float[] f2 = new float[0];
+        public float[] f3 = new float[0];
+        public float[] f4 = new float[0];
+        public float[] f5 = new float[0];
+        public float[] f6 = new float[0];
+        public float[] f7 = new float[0];
+        private float averageValue = 0f;
+        private int fundContador = 0;
+            
+    
+        private Vector2 currentAvMinMax = new Vector2(0, 0);
+  
+        public float[] averageMin = new float[8];
+        public float[] averageMax = new float[8];
+
+
+
+
         public float stepVolume = 1.0f;
         public float stepMain = 0.05f;
         private float _limitFq;
-    
+
+
+
+
 
 
         private int _numberOfSamples;
@@ -36,6 +60,12 @@ public class processAudio : MonoBehaviour
 
         [Range(0, 10)] public float ponderacionPOW=0.5f;
         [Range(0, 10)] public float amplitudPOW=0.5f;
+
+
+
+
+        private float _maxSpectrumValue;
+
 
         void Start()
         {
@@ -61,9 +91,24 @@ public class processAudio : MonoBehaviour
             spectrumData = new float[_numberOfSamples];
             spectrumDataBalanceo = new float[_numberOfSamples];
 
+            fundamentalSpectrum = new float[8];
+            f0 = new float[0];
+            f1 = new float[0];
+            f2 = new float[0];
+            f3 = new float[0];
+            f4 = new float[0];
+            f5 = new float[0];
+            f6 = new float[0];
+            f7 = new float[0];
+            currentAvMinMax = new Vector2(0, 0);
+
+
+
             float ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
                      
         }
+
+
 
  
         void Update()
@@ -71,7 +116,7 @@ public class processAudio : MonoBehaviour
             
 
 
-           //obtengo el volumen cada secundo
+           //obtengo el volumen cada segundo
             if (Time.time > nextActionTime ) {
                 spectrumDataAnterior = spectrumData;
                 nextActionTime += stepVolume;
@@ -106,7 +151,22 @@ public class processAudio : MonoBehaviour
                 //samples limitados
                 int _samplesLimited =  (int)(_numberOfSamples * _limitFq);
 
- 
+
+
+                int totalFundamental = _samplesLimited/8;
+                fundamentalSpectrum = new float[8];
+                averageValue = 0f;
+                fundContador = 0;
+
+                //TEST
+                f0 = new float[_samplesLimited];
+                f1 = new float[_samplesLimited];
+                f2 = new float[_samplesLimited];
+                f3 = new float[_samplesLimited];
+                f4 = new float[_samplesLimited];
+                f5 = new float[_samplesLimited];
+                f6 = new float[_samplesLimited];
+                f7 = new float[_samplesLimited];
           
                 for(int i = 0; i < _samplesLimited; i++){
 
@@ -133,8 +193,8 @@ public class processAudio : MonoBehaviour
                     //5A aproximacion: sino
                     //spectrumData[i] = Mathf.Clamp(((spectrum[i]*powerMultiplier+spectrumDataAnterior[i])/2)*miSino, 0,1);
   
-                    //MAPEO DE Samples
-                    float mapeo = cm.mapToDigital(i, 0, _samplesLimited, 0, 1);
+                    //MAPEO DE Samples 
+                    float mapeo = cm.mapToDigital(i, 0, _samplesLimited, 0.0f, 1);
                     float balanceo = (Mathf.Pow(mapeo, ponderacionPOW)) * amplitudPOW;
 
 
@@ -144,12 +204,76 @@ public class processAudio : MonoBehaviour
            
                     //spectrumData[i] = (spectrum[i]*balanceo)*powerMultiplier;
 
+                    //balanceo cada cuatro muestras
                     if(i % 4 == 0){
-                        spectrumDataBalanceo[i] = balanceo/5;
+                        spectrumDataBalanceo[i] = balanceo/4;
                     }
-                   
 
-                    spectrumData[i] = (spectrum[i]*balanceo)*powerMultiplier;
+                    
+                    spectrumData[i] = 
+                    (spectrum[i]*balanceo)
+                    *(powerMultiplier*100);
+
+  
+                    averageValue += spectrumData[i];
+                    
+                    //almaceno valores para ver qué pasa... DEV
+                    switch (fundContador)
+                    {
+                        case 0:
+                            f0[i] = spectrumData[i];
+                            
+                            break;
+                        case 1:
+                            f1[i] = spectrumData[i];
+                            break;
+                        case 2:
+                            f2[i] = spectrumData[i];
+                            break;
+                        case 3:
+                            f3[i] = spectrumData[i];
+                            break;
+                        case 4:
+                            f4[i] = spectrumData[i];
+                            break;
+                        case 5:
+                            f5[i] = spectrumData[i];
+                            break;
+                        case 6:
+                            f6[i] = spectrumData[i];
+                            break;
+                       case 7:
+                            f7[i] = spectrumData[i];
+                            break;
+                        default:
+                            break;
+                    }
+                    
+ 
+                    GetMinMax(spectrumData[i]);
+
+                    //FUNDAMENTALS
+                    if(i % totalFundamental == (totalFundamental/2)){   
+
+                        averageValue = averageValue/totalFundamental;
+                        fundamentalSpectrum[fundContador] = averageValue;
+                        
+                        //Debug.Log("averageValue: " + averageValue);
+                       
+
+                        //Debug.Log("fundamental: " + fundContador);
+ 
+                        averageMin[fundContador] = currentAvMinMax.x;
+                        averageMax[fundContador] = currentAvMinMax.y;
+                        //restablezco currents
+                        currentAvMinMax = new Vector2(0, 0);
+                        fundContador++;
+                    }
+
+
+
+
+
       
                 }
    
@@ -179,7 +303,21 @@ public class processAudio : MonoBehaviour
         }
 
 
- 
+        //COMPRUEBO MIN y max
+        public Vector2 GetMinMax(float numero)
+        { 
+            if(currentAvMinMax.x < numero){
+                currentAvMinMax.x = numero;
+            }
+            if(currentAvMinMax.x > numero){
+                currentAvMinMax.y = numero;
+            }
+            return currentAvMinMax;
+        }
+
+
+
+
 
         //VOLUMEN
         public float GetAveragedVolume()
@@ -193,6 +331,9 @@ public class processAudio : MonoBehaviour
             }
             return a/64;
         }
+
+
+
 
 
 
@@ -230,6 +371,7 @@ public class processAudio : MonoBehaviour
     //CORUTINA PARA LE PROCESO DE AUDIO
     //algo no estoy haciendo bien...
     //TODO
+    /*
     IEnumerator getSpectrum(){
         for(;;){
             yield return new WaitForSeconds(2.0f);
@@ -239,6 +381,7 @@ public class processAudio : MonoBehaviour
             spectrumData = spectrum;
         }
     }
+    */
 
 
 }

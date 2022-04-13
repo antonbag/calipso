@@ -64,8 +64,8 @@ public class soundBarManager : MonoBehaviour
                 //finally! la magia!
                 GetComponent<Image>().color = new Color(
                     cm.mapToDigital(_processAudio.fundamentalSpectrum[arrayNumber],_processAudio.averageMin[arrayNumber],_processAudio.averageMax[arrayNumber],0,1)
-                   ,
-                   cm.mapToDigital(_processAudio.fundamentalSpectrum[arrayNumber],_processAudio.averageMin[arrayNumber],_processAudio.averageMax[arrayNumber],0,1)
+                    ,
+                    cm.mapToDigital(_processAudio.fundamentalSpectrum[arrayNumber],_processAudio.averageMin[arrayNumber],_processAudio.averageMax[arrayNumber],0,1)
                     ,
                     0
                     ,

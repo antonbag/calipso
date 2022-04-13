@@ -35,7 +35,7 @@ public class processAudio : MonoBehaviour
         public float[] averageMin = new float[8];
         public float[] averageMax = new float[8];
 
-
+        public debugFundamental debugF;
 
 
         public float stepVolume = 1.0f;
@@ -101,7 +101,8 @@ public class processAudio : MonoBehaviour
             f6 = new float[0];
             f7 = new float[0];
             currentAvMinMax = new Vector2(0, 0);
-
+            averageMin[0] = 1f;
+            averageMax[0] = 1f;
 
 
             float ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
@@ -170,7 +171,7 @@ public class processAudio : MonoBehaviour
           
                 for(int i = 0; i < _samplesLimited; i++){
 
-                    if(spectrumData[i] == 0) spectrumData[i] = 0.1f;
+                    //if(spectrumData[i] == 0) spectrumData[i] = 0.1f;
                     
                     float miSino = Mathf.Sin(i);
 
@@ -209,11 +210,25 @@ public class processAudio : MonoBehaviour
                         spectrumDataBalanceo[i] = balanceo/4;
                     }
 
-                    
+                    //consigo el average hasta ahora
+           
+
+                    //actualizo el average
+                    //Vector2 currentAverage = GetMinMax(spectrum[i]);
+
                     spectrumData[i] = 
-                    (spectrum[i]*balanceo)
+                    
+                    (
+                        (
+                            //spectro + media superior /2
+                            (spectrum[i]+averageMax[fundContador])/2
+                            
+                        )
+                    *balanceo
+                    )
                     *(powerMultiplier*100);
 
+                    GetMinMax(spectrumData[i]);
   
                     averageValue += spectrumData[i];
                     
@@ -222,7 +237,6 @@ public class processAudio : MonoBehaviour
                     {
                         case 0:
                             f0[i] = spectrumData[i];
-                            
                             break;
                         case 1:
                             f1[i] = spectrumData[i];
@@ -249,8 +263,8 @@ public class processAudio : MonoBehaviour
                             break;
                     }
                     
- 
-                    GetMinMax(spectrumData[i]);
+          
+                    
 
                     //FUNDAMENTALS
                     if(i % totalFundamental == (totalFundamental/2)){   
@@ -309,8 +323,11 @@ public class processAudio : MonoBehaviour
             if(currentAvMinMax.x < numero){
                 currentAvMinMax.x = numero;
             }
-            if(currentAvMinMax.x > numero){
+            if(currentAvMinMax.y > numero){
                 currentAvMinMax.y = numero;
+            }
+            if(currentAvMinMax == new Vector2(0,0)){
+                return new Vector2(1,1);
             }
             return currentAvMinMax;
         }
@@ -386,3 +403,7 @@ public class processAudio : MonoBehaviour
 
 }
 
+[System.Serializable]
+public class debugFundamental {
+    public float f1 = 0f;
+}

@@ -15,6 +15,8 @@ public class processAudio : MonoBehaviour
         public float[] spectrumDataBalanceo;
         public float[] spectrumDataAnterior;
 
+        public settingController sc;
+
 
         //fundamental frequencies
         public float[] fundamentalSpectrum = new float[8];
@@ -34,6 +36,8 @@ public class processAudio : MonoBehaviour
   
         public float[] averageMin = new float[8];
         public float[] averageMax = new float[8];
+        //supermax es el valor máximo para bajar el volumen 
+        public float superMax = 1f;
 
         public debugFundamental debugF;
 
@@ -70,6 +74,7 @@ public class processAudio : MonoBehaviour
         void Start()
         {
             cm =  FindObjectOfType<calipsoManager>();
+            sc =  FindObjectOfType<settingController>();
 
             stepMain = 0.05f;
 
@@ -209,29 +214,31 @@ public class processAudio : MonoBehaviour
                     if(i % 4 == 0){
                         spectrumDataBalanceo[i] = balanceo/4;
                     }
+   
 
-                    //consigo el average hasta ahora
-           
-
-                    //actualizo el average
-                    //Vector2 currentAverage = GetMinMax(spectrum[i]);
+      
 
                     spectrumData[i] = 
                     
                     (
                         (
                             //spectro + media superior /2
-                            (spectrum[i]+averageMax[fundContador])/2
-                            
+                            //(spectrum[i]+averageMax[fundContador])/2
+                            spectrum[i]
                         )
                     *balanceo
                     )
                     *(powerMultiplier*100);
 
+
+                    //CONTROL
+                    if(spectrumData[i] >= 1000) spectrumData[i] = 10000;
+
+                    //GET AVERAGE
                     GetMinMax(spectrumData[i]);
   
                     averageValue += spectrumData[i];
-                    
+        
                     //almaceno valores para ver qué pasa... DEV
                     switch (fundContador)
                     {
@@ -263,28 +270,31 @@ public class processAudio : MonoBehaviour
                             break;
                     }
                     
-          
-                    
+               
+                 
 
                     //FUNDAMENTALS
                     if(i % totalFundamental == (totalFundamental/2)){   
 
+                        //el average es el valor partido por el total
                         averageValue = averageValue/totalFundamental;
-                        fundamentalSpectrum[fundContador] = averageValue;
-                        
-                        //Debug.Log("averageValue: " + averageValue);
-                       
 
-                        //Debug.Log("fundamental: " + fundContador);
- 
+                        //el espectro fundamental de cada octava es el average
+                        //fundamentalSpectrum[fundContador] = averageValue;
+                        fundamentalSpectrum[fundContador] = (currentAvMinMax.x+currentAvMinMax.y)/2;
+                        
+                        //el espectro fundamental de cada octava es el average
                         averageMin[fundContador] = currentAvMinMax.x;
                         averageMax[fundContador] = currentAvMinMax.y;
+
+                        
                         //restablezco currents
                         currentAvMinMax = new Vector2(0, 0);
-                        fundContador++;
+                        if(fundContador < 7){
+                            fundContador++;
+                        }
+                
                     }
-
-
 
 
 
@@ -294,43 +304,52 @@ public class processAudio : MonoBehaviour
 
             }
 
+            //SUPERMAX
+            //calculo el volumen maximo con la media de todos los averageMax
+            float superMaxSuma = 0f;
+            for(int f = 0; f < averageMax.Length; f++){
+                superMaxSuma += averageMax[f];
+            }
 
+            superMax = superMaxSuma/averageMax.Length;
+            if(superMax > 300){
+                sc.sensitivitySlider.value = PlayerPrefsManager.GetSensitivity()-1.0f;
+                //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
+            }
+            if(superMax < 100){
+                sc.sensitivitySlider.value = PlayerPrefsManager.GetSensitivity()+1.0f;
+                //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
+            }
+            Debug.Log(superMax);
 
-            
+           //if(PlayerPrefsManager.SetSensitivity(sensitivitySlider.value);)    
 
-
-     
-            //StartCoroutine(getSpectrum());
-
-
-
-
- 
-
- 
-
-            /*
-            var audioScale = Mathf.Pow(spectrumData[i] * AudioScale, Power);
-            var newScale = new Vector3(_originalScale.x, _originalScale.y + audioScale, _originalScale.z);
-            var halfScale = newScale / 2.0f;
-            */
         }
 
 
         //COMPRUEBO MIN y max
         public Vector2 GetMinMax(float numero)
         { 
-            if(currentAvMinMax.x < numero){
+            //Vector2 minMax = new Vector2(numero, numero);
+
+            //MIN
+            if(numero < currentAvMinMax.x || currentAvMinMax.x==0){
                 currentAvMinMax.x = numero;
             }
-            if(currentAvMinMax.y > numero){
+            //Debug.Log(currentAvMinMax.y);
+            if(numero > currentAvMinMax.y || currentAvMinMax.y==0){
                 currentAvMinMax.y = numero;
             }
+
             if(currentAvMinMax == new Vector2(0,0)){
                 return new Vector2(1,1);
             }
+
             return currentAvMinMax;
         }
+
+
+
 
 
 

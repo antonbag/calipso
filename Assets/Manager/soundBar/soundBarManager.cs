@@ -73,7 +73,7 @@ public class soundBarManager : MonoBehaviour
                 );
  
 
-                Debug.Log(_processAudio.averageMin[arrayNumber]);
+                //Debug.Log(_processAudio.averageMin[arrayNumber]);
 
             }else{
                 //NORMAL

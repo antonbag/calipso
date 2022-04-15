@@ -136,7 +136,7 @@ public class soundBarCreation : MonoBehaviour
                     0.5f
                 );
 
-                Debug.Log(soundBarPrefabFundamental.name);
+                //Debug.Log(soundBarPrefabFundamental.name);
                 soundBarPrefabFundamental.transform.SetParent (SoundBarCanvas.transform, false);  
 
                 fundContador += 1;

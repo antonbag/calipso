@@ -20,7 +20,8 @@ public class createCave : MonoBehaviour
     {
         cm = FindObjectOfType<calipsoManager>();
 
-
+        //position center of camera
+        transform.position = new Vector3((maxAncho / 2) * -1.0f,-3,0);
    
 
 
@@ -42,40 +43,43 @@ public class createCave : MonoBehaviour
             }
 
 
-            Material imparMaterial = Resources.Load<Material>("Materials/tileImpar");
-            Material parMaterial = Resources.Load<Material>("Materials/tilePar");
+            //Material imparMaterial = Resources.Load<Material>("Materials/tileImpar");
+            //Material parMaterial = Resources.Load<Material>("Materials/tilePar");
 
-            //Ancho
+
+
+            //bucle para el Ancho
             for(int i = 1; i < maxAncho; i++){
  
                 //GameObject instaTile = Instantiate(tile, new Vector3(2*i, 0, 0), Quaternion.identity) as GameObject;
-
                 //instaTile.transform.SetParent (transform, false);
 
+                //bucle para el Largo
                 for(int f = 1; f < maxLargo; f++){
 
-        
+                    //instancia del tile
                     Quaternion rot = transform.rotation * Quaternion.AngleAxis(-90, Vector3.right);
                     GameObject instaTile = Instantiate(tile, new Vector3(0, 0, 0), rot) as GameObject;
                     
+                    //ajuste para el tile perfecto  
                     float newZ = f*(1.5f);
                     float newX = i+0.5f;
 
-                    //front
+                    //front bias
                     float newZDigital = cm.mapToDigital(f, maxLargo/2, maxLargo, 0, 1);
-                    float exponencial = (Mathf.Pow(newZDigital, balanceoValor)) * 20f;
+                    float exponencial = (Mathf.Pow(newZDigital, balanceoValor)) * Random.Range(18f, 22f);
 
-                    //right
+                    //right bias
                     float newXDigital = cm.mapToDigital(i, maxAncho/2, maxAncho, 0, 1);
-                    float exponencialX = (Mathf.Pow(newXDigital, balanceoValor)) * 20f;
+                    float exponencialX = (Mathf.Pow(newXDigital, balanceoValor)) * Random.Range(18f, 22f);
 
-                    //left
+                    //left bias
                     float newSinDigital = cm.mapToDigital(i, 1, maxAncho/4, 1, 0);
-                    float exponencialSin = Mathf.Pow(Mathf.Sin(newSinDigital),balanceoValor) * 20f;
+                    float exponencialSin = Mathf.Pow(Mathf.Sin(newSinDigital),balanceoValor) * Random.Range(18f, 22f);
 
-                    Debug.Log(exponencialSin);
 
-                    //PAR
+
+                    //PAR //IMPAR //visualización de los tiles
                     if(f % 2 == 0){
                         //instaTile.transform.position = new Vector3(i, 0, f*(1.5f));
                         instaTile.transform.position = new Vector3(newX, 0, newZ/2);
@@ -88,7 +92,7 @@ public class createCave : MonoBehaviour
                     instaTile.transform.localScale = new Vector3(
                         instaTile.transform.localScale.x, 
                         instaTile.transform.localScale.y, 
-                        Random.Range(0.8f, 1.2f)+((exponencial+exponencialX+exponencialSin)/3)
+                        Random.Range(0.6f, 1.5f)+((exponencial+exponencialX+exponencialSin)/3)
                         
                     );
                     

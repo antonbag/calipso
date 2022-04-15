@@ -25,19 +25,19 @@ public class settingController : MonoBehaviour
 
 	[Header("==Sound DEFAULTS==")]
 
-	public int numberOfSamples = 128;
-	public float sensitivity = 500.0f;
-	public float soundBias = 0.5f;
-	public float threshold = 0.5f;
-	public float optimizeSample = 1.0f;
-	public float limitFq = 1.0f;
-	public int audioSampleRate = 22050;
+	public int numberOfSamples;
+	public float sensitivity;
+	public float soundBias;
+	public float threshold;
+	public float optimizeSample;
+	public float limitFq;
+	public int audioSampleRate;
 
     void Awake() {
         //cm = GameObject.Find("CalipsoManager").GetComponent<CalipsoManager>();
-        cm =  FindObjectOfType<calipsoManager>();
-		mic= FindObjectOfType<micController>();
-
+        cm 	= FindObjectOfType<calipsoManager>();
+		mic	= FindObjectOfType<micController>();
+		
 		SetDefaults();
     }
 
@@ -90,7 +90,7 @@ public class settingController : MonoBehaviour
 		thresholdSlider.value = 0.001f;
 		optimizeSampleSlider.value = 1;
 		numSamplesDropdown.value = 2; //1=128, 2=256, 3=512, 4=1024, 5=2048
-		limitFqSlider.value = 0.5f; // 1 = total
+		limitFqSlider.value = 0.15f; // 1 = total
 
 		PlayerPrefsManager.SetMicrophone(micDropdown.value);
 		PlayerPrefsManager.SetSensitivity(sensitivitySlider.value);

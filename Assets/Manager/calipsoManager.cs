@@ -20,20 +20,24 @@ namespace Unity.CALIPSO{
         public GameObject fpsController;
 
         /*
-                [Header("==Sound DEFAULTS==")]
+        [Header("==Sound DEFAULTS==")]
 
-                public int samples = 256;
-                public int sensitivity = 500;
-                public float threshold = 0.5f;
+        public int samples = 256;
+        public int sensitivity = 500;
+        public float threshold = 0.5f;
 
 
-                void Awake(){
-                    PlayerPrefsManager.SetSamples(samples);
-                    PlayerPrefsManager.SetSensitivity(sensitivity);
-                    if(threshold > 1f) threshold = 1f;
-                    PlayerPrefsManager.SetThreshold(threshold); 
-                }
+        void Awake(){
+            PlayerPrefsManager.SetSamples(samples);
+            PlayerPrefsManager.SetSensitivity(sensitivity);
+            if(threshold > 1f) threshold = 1f;
+            PlayerPrefsManager.SetThreshold(threshold); 
+        }
         */
+
+        [Space(20)]
+        public int orbeNumber = 1;   
+
         
         // Start is called before the first frame update
         void Start()

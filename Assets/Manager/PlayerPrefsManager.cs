@@ -10,6 +10,7 @@ public class PlayerPrefsManager : MonoBehaviour {
 	const string OPTIMIZESAMPLES_KEY= "optimizeSamples";
 	const string THRESHOLD_KEY 		= "threshold";
 	const string LIMITFQ_KEY 		= "limitFq";
+	const string AUTOVOLUME_KEY 	= "autovolume";
 
 	public static void SetMicrophone (int mic) {
 		PlayerPrefs.SetInt (MICROPHONE_KEY, mic);
@@ -93,6 +94,19 @@ public class PlayerPrefsManager : MonoBehaviour {
 			return 1.0f;
 		}
 		return PlayerPrefs.GetFloat (OPTIMIZESAMPLES_KEY);
+	}
+
+	public static void SetAutovolume (int autovolume) {
+		PlayerPrefs.SetInt (AUTOVOLUME_KEY, autovolume);
+	}
+
+	public static bool GetAutovolume (){
+		if(PlayerPrefs.GetInt (AUTOVOLUME_KEY) == 1){
+			return true;
+		}else{
+			return false;
+		}
+		
 	}
 
 	

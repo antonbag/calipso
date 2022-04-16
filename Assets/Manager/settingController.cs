@@ -10,10 +10,10 @@ public class settingController : MonoBehaviour
 	
 	public TMPro.TMP_Dropdown micDropdown, numSamplesDropdown;
 	public Slider sensitivitySlider, soundBiasSlider, thresholdSlider, optimizeSampleSlider, limitFqSlider;
+	public Toggle autoVolumeToggle;
 	public GameObject canvasSetting;
 	//public GameObject openButton;
 
-	
 
 	private List<string> options = new List<string>();
     
@@ -64,7 +64,7 @@ public class settingController : MonoBehaviour
 		thresholdSlider.onValueChanged.AddListener(delegate {thresholdValueChangedHandler(thresholdSlider);});
 		optimizeSampleSlider.onValueChanged.AddListener(delegate {optimizeSampleSliderValueChangedHandler(optimizeSampleSlider);});
 		limitFqSlider.onValueChanged.AddListener(delegate {limitFqSliderValueChangedHandler(limitFqSlider);});
-
+		autoVolumeToggle.onValueChanged.AddListener(delegate {autoVolumeToggleValueChangedHandler(autoVolumeToggle);});
 	}
 
 
@@ -91,6 +91,7 @@ public class settingController : MonoBehaviour
 		optimizeSampleSlider.value = 1;
 		numSamplesDropdown.value = 2; //1=128, 2=256, 3=512, 4=1024, 5=2048
 		limitFqSlider.value = 0.15f; // 1 = total
+		autoVolumeToggle.isOn = true;
 
 		PlayerPrefsManager.SetMicrophone(micDropdown.value);
 		PlayerPrefsManager.SetSensitivity(sensitivitySlider.value);
@@ -98,6 +99,7 @@ public class settingController : MonoBehaviour
 		PlayerPrefsManager.SetOptimizeSamples(optimizeSampleSlider.value);
 		PlayerPrefsManager.SetSamples(256);
 		PlayerPrefsManager.SetLimitFq(limitFqSlider.value);
+		PlayerPrefsManager.SetAutovolume(1);
 			
 	}
  
@@ -170,6 +172,13 @@ public class settingController : MonoBehaviour
 		limitFq = limitFqSlider.value;
 		PlayerPrefsManager.SetLimitFq(limitFq);
 		mic.UpdateMicrophone();
+	}
+
+	//AUTO VOLUME
+	public void autoVolumeToggleValueChangedHandler(Toggle autoVolumeToggle){
+		bool autoVolume = autoVolumeToggle.isOn;
+		PlayerPrefsManager.SetAutovolume(autoVolume ? 1 : 0);
+		//mic.UpdateMicrophone();
 	}
 
 

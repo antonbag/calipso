@@ -5,20 +5,34 @@ using Unity.CALIPSO.MIC;
 
 public class processAudio : MonoBehaviour
 {
+        //scripts (in a class)
+        public getScrits _scripts;
+
+        [Space(20)]
+
         //control from settings. public to get it in real time from soundbarManager
         [Range(1, 1000)] public float powerMultiplier;
-        public float lerpTime = 1;
-
         public GameObject gmVolumeValue;
 
+        [Space(20)]
+
+
+        [Header("===Time range===")]
+        [Range(0.1f, 3.0f)] public float stepVolume = 1.0f;
+        [Range(0.01f, 0.10f)] public float stepMain = 0.05f;
+
+
+        [Space(20)]
+
+        [Header("===Spectrum data===")]
         public float[] spectrumData;
         public float[] spectrumDataBalanceo;
         public float[] spectrumDataAnterior;
 
-        public settingController sc;
 
+        [Space(20)]
 
-        //fundamental frequencies
+        [Header("===Fundamentals data===")]
         public float[] fundamentalSpectrum = new float[8];
         public float[] f0 = new float[0];
         public float[] f1 = new float[0];
@@ -29,52 +43,51 @@ public class processAudio : MonoBehaviour
         public float[] f6 = new float[0];
         public float[] f7 = new float[0];
         private float averageValue = 0f;
-        private int fundContador = 0;
-            
-    
+
+       
+
+        
         private Vector2 currentAvMinMax = new Vector2(0, 0);
-  
+
+        [Space(20)]
+        [Header("===Average===")]
+
         public float[] averageMin = new float[8];
         public float[] averageMax = new float[8];
         //supermax es el valor máximo para bajar el volumen 
         public float superMax = 1f;
+        public float averageVolume = 0f;
 
-        public debugFundamental debugF;
 
-
-        public float stepVolume = 1.0f;
-        public float stepMain = 0.05f;
         private float _limitFq;
-
-
-
-
-
-
+    
         private int _numberOfSamples;
         private AudioSource _audioSource;
         private FFTWindow fftWindow;
 
-        private micController mic;
-        private calipsoManager cm;
 
         //cada cierto tiempo
-        private float nextActionTime = 0.0f;
+        private float nextTime = 0.0f;
         private float currentUpdateTime = 0.0f;
 
-        [Range(0, 10)] public float ponderacionPOW=0.5f;
-        [Range(0, 10)] public float amplitudPOW=0.5f;
-
-
-
+        [Range(0, 10)] private float ponderacionPOW=0.5f;
+        [Range(0, 10)] private float amplitudPOW=0.5f;
 
         private float _maxSpectrumValue;
 
+        [Space(20)]
+        [Header("===Recording===")]
+        public float recordingLimit = 10.0f;
+        public float recordingRestLimit = 3.0f;
+        private bool isRecording = false;
+        private int recordingCounter = 0;
+        private int recordingRestCounter = 0;
+ 
 
         void Start()
         {
-            cm =  FindObjectOfType<calipsoManager>();
-            sc =  FindObjectOfType<settingController>();
+            //cm =  FindObjectOfType<calipsoManager>();
+            //sc =  FindObjectOfType<settingController>();
 
             stepMain = 0.05f;
 
@@ -83,11 +96,11 @@ public class processAudio : MonoBehaviour
             _limitFq = PlayerPrefsManager.GetLimitFq ();
 
 
-            mic = gameObject.GetComponent<micController>();
+           
             _audioSource = gameObject.GetComponent<AudioSource>();
 
             //check the number of samples
-            _numberOfSamples = mic.checkSamplesRange();
+            _numberOfSamples = _scripts.mic.checkSamplesRange();
 
             //create the spectrum array (based on defined samples)
             //float[] spectrum = new float[_numberOfSamples];
@@ -97,6 +110,7 @@ public class processAudio : MonoBehaviour
             spectrumDataBalanceo = new float[_numberOfSamples];
 
             fundamentalSpectrum = new float[8];
+
             f0 = new float[0];
             f1 = new float[0];
             f2 = new float[0];
@@ -105,6 +119,7 @@ public class processAudio : MonoBehaviour
             f5 = new float[0];
             f6 = new float[0];
             f7 = new float[0];
+
             currentAvMinMax = new Vector2(0, 0);
             averageMin[0] = 1f;
             averageMax[0] = 1f;
@@ -121,15 +136,11 @@ public class processAudio : MonoBehaviour
         {   
             
 
-
-           //obtengo el volumen cada segundo
-            if (Time.time > nextActionTime ) {
-                spectrumDataAnterior = spectrumData;
-                nextActionTime += stepVolume;
-                gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = GetAveragedVolume().ToString();
-            }
-
-            //obtengo el volumen cada 0.05
+            /*******************************/
+            /*******************************/
+            /******** cada  50 ms **********/
+            /*******************************/
+            /*******************************/
             currentUpdateTime += Time.deltaTime;
             if(currentUpdateTime >= stepMain){
                 currentUpdateTime = 0f;
@@ -137,7 +148,7 @@ public class processAudio : MonoBehaviour
                 powerMultiplier = PlayerPrefsManager.GetSensitivity ();
                 _limitFq = PlayerPrefsManager.GetLimitFq ();
                 //check the number of samples
-                _numberOfSamples = mic.checkSamplesRange();
+                _numberOfSamples = _scripts.mic.checkSamplesRange();
 
                 ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
 
@@ -150,31 +161,46 @@ public class processAudio : MonoBehaviour
 
                 //relleno el espectrum
                 _audioSource.GetSpectrumData(spectrum, 0, fftWindow);
+                //_audioSource.GetOutputData(spectrum, 0);
+
+                //cojo la frecuencia 440hz y analizo si hay sonido para no malgastar
+                if(spectrum[150] <= 0.000001f){
+                    Debug.Log("sin sonido");
+
+                    //si estoy grabando y se acaba el sonido
+                    if(isRecording){
+                        guardarClip();
+                    }
+
+                    return;
+                }
+                
         
                 //OPERANDO!
                 //spectrumData = spectrum;
 
                 //samples limitados
-                int _samplesLimited =  (int)(_numberOfSamples * _limitFq);
+                int _samplesLimited  = (int)(_numberOfSamples * _limitFq);
 
 
 
                 int totalFundamental = _samplesLimited/8;
                 fundamentalSpectrum = new float[8];
                 averageValue = 0f;
-                fundContador = 0;
+                int fundContador = 0;
+                int contadorF = 0;
 
                 //TEST
-                f0 = new float[_samplesLimited];
-                f1 = new float[_samplesLimited];
-                f2 = new float[_samplesLimited];
-                f3 = new float[_samplesLimited];
-                f4 = new float[_samplesLimited];
-                f5 = new float[_samplesLimited];
-                f6 = new float[_samplesLimited];
-                f7 = new float[_samplesLimited];
+                f0 = new float[totalFundamental];
+                f1 = new float[totalFundamental];
+                f2 = new float[totalFundamental];
+                f3 = new float[totalFundamental];
+                f4 = new float[totalFundamental];
+                f5 = new float[totalFundamental];
+                f6 = new float[totalFundamental];
+                f7 = new float[totalFundamental];
           
-                for(int i = 0; i < _samplesLimited; i++){
+                for(int i = 1; i < _samplesLimited+1; i++){
 
                     //if(spectrumData[i] == 0) spectrumData[i] = 0.1f;
                     
@@ -200,7 +226,7 @@ public class processAudio : MonoBehaviour
                     //spectrumData[i] = Mathf.Clamp(((spectrum[i]*powerMultiplier+spectrumDataAnterior[i])/2)*miSino, 0,1);
   
                     //MAPEO DE Samples 
-                    float mapeo = cm.mapToDigital(i, 0, _samplesLimited, 0.0f, 1);
+                    float mapeo = _scripts.cm.mapToDigital(i, 0, _samplesLimited, 0.0f, 1);
                     float balanceo = (Mathf.Pow(mapeo, ponderacionPOW)) * amplitudPOW;
 
 
@@ -215,24 +241,20 @@ public class processAudio : MonoBehaviour
                         spectrumDataBalanceo[i] = balanceo/4;
                     }
    
-
-      
-
-                    spectrumData[i] = 
                     
-                    (
-                        (
-                            //spectro + media superior /2
-                            //(spectrum[i]+averageMax[fundContador])/2
-                            spectrum[i]
-                        )
-                    *balanceo
-                    )
-                    *(powerMultiplier*100);
+                    //if(spectrumDataAnterior[i] == 0) spectrumDataAnterior[i] = 0.1f;
+
+                    //SPECTRUM TO DATA
+                    spectrumData[i] = (spectrum[i]*balanceo) * (powerMultiplier*1000);
+
+
+                    //STABILITY BY AVERAGE
+                    spectrumData[i] = (spectrumData[i]+spectrumDataAnterior[i])/2;
+
 
 
                     //CONTROL
-                    if(spectrumData[i] >= 1000) spectrumData[i] = 10000;
+                    if(spectrumData[i] >= 5000) spectrumData[i] = 5000;
 
                     //GET AVERAGE
                     GetMinMax(spectrumData[i]);
@@ -243,38 +265,39 @@ public class processAudio : MonoBehaviour
                     switch (fundContador)
                     {
                         case 0:
-                            f0[i] = spectrumData[i];
+                            f0[contadorF] = spectrumData[i];
                             break;
                         case 1:
-                            f1[i] = spectrumData[i];
+                            //test lerp smoth
+                            f1[contadorF] = Mathf.Lerp(spectrumData[i], averageValue, 0.05f);
                             break;
                         case 2:
-                            f2[i] = spectrumData[i];
+                            f2[contadorF] = spectrumData[i];
                             break;
                         case 3:
-                            f3[i] = spectrumData[i];
+                            f3[contadorF] = spectrumData[i];
                             break;
                         case 4:
-                            f4[i] = spectrumData[i];
+                            f4[contadorF] = spectrumData[i];
                             break;
                         case 5:
-                            f5[i] = spectrumData[i];
+                            f5[contadorF] = spectrumData[i];
                             break;
                         case 6:
-                            f6[i] = spectrumData[i];
+                            f6[contadorF] = spectrumData[i];
                             break;
                        case 7:
-                            f7[i] = spectrumData[i];
+                            f7[contadorF] = spectrumData[i];
                             break;
                         default:
                             break;
                     }
                     
                
-                 
+                    contadorF++;
 
                     //FUNDAMENTALS
-                    if(i % totalFundamental == (totalFundamental/2)){   
+                    if(i % totalFundamental == 0){   
 
                         //el average es el valor partido por el total
                         averageValue = averageValue/totalFundamental;
@@ -293,10 +316,10 @@ public class processAudio : MonoBehaviour
                         if(fundContador < 7){
                             fundContador++;
                         }
+
+                        contadorF = 0;
                 
                     }
-
-
 
       
                 }
@@ -311,20 +334,89 @@ public class processAudio : MonoBehaviour
                 superMaxSuma += averageMax[f];
             }
 
+            
             superMax = superMaxSuma/averageMax.Length;
-            if(superMax > 300){
-                sc.sensitivitySlider.value = PlayerPrefsManager.GetSensitivity()-1.0f;
-                //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
-            }
-            if(superMax < 100){
-                sc.sensitivitySlider.value = PlayerPrefsManager.GetSensitivity()+1.0f;
-                //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
-            }
-            Debug.Log(superMax);
 
-           //if(PlayerPrefsManager.SetSensitivity(sensitivitySlider.value);)    
+
+            averageVolume = GetAveragedVolume();
+
+
+
+            //START STOP RECORDING
+            if(averageVolume > 0.01f){
+                
+                if(!isRecording && (recordingRestCounter > recordingRestLimit)){
+                    isRecording = true;
+                    Debug.Log("voy a grabar!: " + averageVolume);
+                }
+            }
+
+
+            
+            /*******************************/
+            /*******************************/
+            /******** cada  1 seg **********/
+            /*******************************/
+            /*******************************/
+            if (Time.time > nextTime ) {
+                
+                /*******************************/
+                // VOLUMEN 
+                spectrumDataAnterior = spectrumData;
+                nextTime += stepVolume;
+
+                gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = averageVolume.ToString();
+
+                //AUTOVOLUME
+                if(PlayerPrefsManager.GetAutovolume()){
+                    if(superMax > 200){
+                        _scripts.sc.sensitivitySlider.value = PlayerPrefsManager.GetSensitivity()*0.9f;
+                        //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
+                    }
+                    if(superMax < 50){
+                        _scripts.sc.sensitivitySlider.value = PlayerPrefsManager.GetSensitivity()*1.1f;
+                        //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
+                    }
+                }
+
+
+                /*******************************/
+                // RECORDING
+                recordingRestCounter++;
+                //si estoy grabando y no he llegado a la duracion maxima...
+                if(isRecording && (recordingCounter < recordingLimit)){
+                    Debug.Log("sigo grabando: "+ recordingCounter);
+                    recordingCounter++;
+                }
+
+                //si estoy grabando y he llegado a la duracion maxima...
+                if(isRecording && (recordingCounter >= recordingLimit)){
+                    guardarClip();
+
+                }
+
+                //Debug.Log("recordingCounter: "+ recordingCounter+" recordingLimit: "+recordingLimit);
+
+            }
+
+
+
 
         }
+
+
+
+
+
+        public void guardarClip(){
+            _scripts.mic.guardaClip();
+            isRecording = false;
+            recordingCounter = 0;
+            recordingRestCounter = 0;
+        }
+
+
+
 
 
         //COMPRUEBO MIN y max
@@ -350,11 +442,6 @@ public class processAudio : MonoBehaviour
 
 
 
-
-
-
-
-
         //VOLUMEN
         public float GetAveragedVolume()
         { 
@@ -365,7 +452,8 @@ public class processAudio : MonoBehaviour
             {
                 a += Mathf.Abs(s);
             }
-            return a/64;
+            
+            return (a/64)*100;
         }
 
 
@@ -423,6 +511,9 @@ public class processAudio : MonoBehaviour
 }
 
 [System.Serializable]
-public class debugFundamental {
-    public float f1 = 0f;
+public class getScrits {
+        public settingController sc;
+        public calipsoManager cm;
+        public micController mic;
 }
+

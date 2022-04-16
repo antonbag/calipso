@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI; //for accessing Sliders and Dropdown
 using System.Collections.Generic; // So we can use List<>
 using UnityEngine.Audio; // So we can use AudioMixer
-
+using System.IO;
 
 
 namespace Unity.CALIPSO.MIC{
@@ -34,6 +34,7 @@ namespace Unity.CALIPSO.MIC{
 
 		private soundBarCreation sb;
 		private settingController sc;
+		private calipsoManager cm;
 
 		// Start is called before the first frame update
 		void Start()
@@ -43,6 +44,7 @@ namespace Unity.CALIPSO.MIC{
 
 			sc = FindObjectOfType<settingController>();
 			sb = FindObjectOfType<soundBarCreation>();
+			cm = FindObjectOfType<calipsoManager>();
 
 			//initialize input with default mic
 			UpdateMicrophone (); 
@@ -127,9 +129,34 @@ namespace Unity.CALIPSO.MIC{
 
 		void Update()
 		{
-
+ 
+		}
 
  
+
+		public void guardaClip()
+		{
+
+			//COMPRUEBO QUE EXISTE EL DIRECTORY
+			string current_path = Application.persistentDataPath;
+			//check if directory doesn't exit
+			if(!Directory.Exists(Application.persistentDataPath+"/CALIPSO_sounds/"))
+			{    
+				Directory.CreateDirectory(Application.persistentDataPath+"/CALIPSO_sounds/");
+			}
+
+			byte[] wavFile = OpenWavParser.AudioClipToByteArray(_audioSource.clip);
+			File.WriteAllBytes(Path.Combine(Application.persistentDataPath+"/CALIPSO_sounds/", cm.orbeNumber+".wav"), wavFile);
+
+
+			//ORBE NUMBER
+			if(cm.orbeNumber <=255){
+				cm.orbeNumber++;
+			}else{
+				cm.orbeNumber=0;
+			}
+			
+			Debug.Log("Clip Guardado!!!!!"+ cm.orbeNumber);
 		}
 
 	}

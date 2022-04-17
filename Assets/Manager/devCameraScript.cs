@@ -26,7 +26,6 @@ public class devCameraScript : MonoBehaviour
         //cm = GameObject.Find("CalipsoManager").GetComponent<CalipsoManager>();
         cm =  FindObjectOfType<calipsoManager>();
         devCam = this.GetComponentInParent<Camera>();
-
         devCam.CopyFrom(Camera.main);
     }
 

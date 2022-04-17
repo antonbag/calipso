@@ -87,7 +87,7 @@ public class settingController : MonoBehaviour
 		micDropdown.value = 0;
 		sensitivitySlider.value = 100f;
 		soundBiasSlider.value = 0.5f;
-		thresholdSlider.value = 0.001f;
+		thresholdSlider.value = 0.1f;
 		optimizeSampleSlider.value = 1;
 		numSamplesDropdown.value = 2; //1=128, 2=256, 3=512, 4=1024, 5=2048
 		limitFqSlider.value = 0.15f; // 1 = total

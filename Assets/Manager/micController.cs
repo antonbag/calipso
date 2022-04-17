@@ -74,7 +74,7 @@ namespace Unity.CALIPSO.MIC{
 		{
 			#if !UNITY_WEBGL
 					
-					_audioSource.clip = Microphone.Start(sc.getMicrophone(), true, 10, sc.audioSampleRate);
+					_audioSource.clip = Microphone.Start(sc.getMicrophone(), true, 3, sc.audioSampleRate);
 					_audioSource.loop = true;
 					IsWorking = true;
 					while (!(Microphone.GetPosition(sc.getMicrophone()) > 0))
@@ -136,7 +136,7 @@ namespace Unity.CALIPSO.MIC{
 
 		public void guardaClip()
 		{
-
+			WorkStop();
 			//COMPRUEBO QUE EXISTE EL DIRECTORY
 			string current_path = Application.persistentDataPath;
 			//check if directory doesn't exit
@@ -155,8 +155,10 @@ namespace Unity.CALIPSO.MIC{
 			}else{
 				cm.orbeNumber=0;
 			}
-			
+
 			Debug.Log("Clip Guardado!!!!!"+ cm.orbeNumber);
+			WorkStart();
+			
 		}
 
 	}

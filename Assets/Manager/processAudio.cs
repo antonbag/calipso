@@ -8,6 +8,14 @@ public class processAudio : MonoBehaviour
         //scripts (in a class)
         public getScrits _scripts;
 
+        [System.Serializable]
+        public class getScrits {
+                public settingController sc;
+                public calipsoManager cm;
+                public micController mic;
+        }
+
+
         [Space(20)]
 
         //control from settings. public to get it in real time from soundbarManager
@@ -70,8 +78,9 @@ public class processAudio : MonoBehaviour
         private float nextTime = 0.0f;
         private float currentUpdateTime = 0.0f;
 
-        [Range(0, 10)] private float ponderacionPOW=0.5f;
-        [Range(0, 10)] private float amplitudPOW=0.5f;
+        private float ponderacionPOW=0.5f;
+        private float recThreshold=0.1f;
+        private float amplitudPOW=0.5f;
 
         private float _maxSpectrumValue;
 
@@ -79,9 +88,11 @@ public class processAudio : MonoBehaviour
         [Header("===Recording===")]
         public float recordingLimit = 10.0f;
         public float recordingRestLimit = 3.0f;
-        private bool isRecording = false;
+        public float recordingMinimum = 1.0f;
+        public bool isRecording = false;
         private int recordingCounter = 0;
         private int recordingRestCounter = 0;
+        private int recordingMinimumCounter = 0;
  
 
         void Start()
@@ -125,7 +136,6 @@ public class processAudio : MonoBehaviour
             averageMax[0] = 1f;
 
 
-            float ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
                      
         }
 
@@ -151,6 +161,7 @@ public class processAudio : MonoBehaviour
                 _numberOfSamples = _scripts.mic.checkSamplesRange();
 
                 ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
+                recThreshold = PlayerPrefsManager.GetThreshold ();
 
                 // initialize spectrum array every frame
                 //DEV
@@ -163,18 +174,37 @@ public class processAudio : MonoBehaviour
                 _audioSource.GetSpectrumData(spectrum, 0, fftWindow);
                 //_audioSource.GetOutputData(spectrum, 0);
 
-                //cojo la frecuencia 440hz y analizo si hay sonido para no malgastar
-                if(spectrum[150] <= 0.000001f){
-                    Debug.Log("sin sonido");
+ 
 
+                //CONTROL DE VOLUMEN Y REC
+                //cojo la frecuencia 440hz y analizo si hay sonido para no malgastar
+                
+                if(
+                    (spectrum[150]*10) <= recThreshold &&
+                    !isRecording
+                ){
+
+
+                    Debug.Log("No hay sonido:"+(spectrum[150]*10)+"<"+recThreshold);
+                    return;
                     //si estoy grabando y se acaba el sonido
-                    if(isRecording){
+                    if(isRecording && (recordingMinimum >= recordingMinimumCounter)){
                         guardarClip();
+                    }else{
+
+
+                        
                     }
 
-                    return;
+
+
+                    
+                    
                 }
                 
+                
+                
+         
         
                 //OPERANDO!
                 //spectrumData = spectrum;
@@ -348,6 +378,7 @@ public class processAudio : MonoBehaviour
                 if(!isRecording && (recordingRestCounter > recordingRestLimit)){
                     isRecording = true;
                     Debug.Log("voy a grabar!: " + averageVolume);
+                    recordingMinimumCounter = 0;
                 }
             }
 
@@ -384,13 +415,22 @@ public class processAudio : MonoBehaviour
                 // RECORDING
                 recordingRestCounter++;
                 //si estoy grabando y no he llegado a la duracion maxima...
-                if(isRecording && (recordingCounter < recordingLimit)){
+                if(
+                    isRecording && 
+                    (recordingCounter < recordingLimit)
+                ){
                     Debug.Log("sigo grabando: "+ recordingCounter);
                     recordingCounter++;
+                    recordingMinimumCounter++;
                 }
 
+
                 //si estoy grabando y he llegado a la duracion maxima...
-                if(isRecording && (recordingCounter >= recordingLimit)){
+                if(
+                    isRecording && 
+                    (recordingCounter >= recordingLimit) && 
+                    (recordingMinimumCounter > recordingMinimum)
+                ){
                     guardarClip();
 
                 }
@@ -510,10 +550,5 @@ public class processAudio : MonoBehaviour
 
 }
 
-[System.Serializable]
-public class getScrits {
-        public settingController sc;
-        public calipsoManager cm;
-        public micController mic;
-}
+
 

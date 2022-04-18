@@ -63,6 +63,7 @@ public class processOrbe : MonoBehaviour
 
 
     //TESTS dev
+    /*
     public GameObject hexatest;
     public GameObject hexatest1;
     public GameObject hexatest2;
@@ -72,7 +73,7 @@ public class processOrbe : MonoBehaviour
     public GameObject hexatest6;
     public GameObject hexatest7;
     public GameObject hexatest8;
-
+    */
     
 
 

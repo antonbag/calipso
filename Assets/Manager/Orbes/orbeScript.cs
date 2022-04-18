@@ -24,7 +24,6 @@ public class orbeScript : MonoBehaviour
     float minTreb       = 1.0f;
     float maxTreb       = 0.0f;
 
-    public bool cannonfired = false;
 
     //SMOTHNESS
     Vector3 cameraPos;
@@ -45,10 +44,22 @@ public class orbeScript : MonoBehaviour
 
 
     //PARAMS
+    //Y
     public float ySinFreq = 0.5f;
     public float ySinMultiplier = 0.1f;
+    public float yCurrentMultiplier = 11.0f;
+    public float yFallStreng =0.7f;
+    //rotationY
+    private float newRotationY = 0.0f;
 
-    private float lerpTime = 0.0f;
+    public float multiplyTest = 1f;
+
+    [Header("===Times range===")]
+        [Range(0.1f, 3.0f)] public float stepRumbo = 1.0f;
+        private float nextTime = 0.0f;
+        private float lerpTime = 0.0f;
+
+
 
 
     void Awake() {
@@ -60,8 +71,8 @@ public class orbeScript : MonoBehaviour
     void Start()
     {
         //POSITION INICIAL
-        positionInicial = new Vector3(maincam.transform.position.x, maincam.transform.position.y-1.0f, (maincam.transform.position.z-2.0f) + speedMultiplier);
-        transform.position = positionInicial;
+        //positionInicial = new Vector3(maincam.transform.position.x, maincam.transform.position.y+Random.Range(-1.0f, 1.0f), (maincam.transform.position.z-2.0f) + speedMultiplier);
+        //transform.position = positionInicial;
 
          _processOrbe = GetComponent<processOrbe>();
 
@@ -72,21 +83,23 @@ public class orbeScript : MonoBehaviour
         force = GetComponent<ConstantForce>();
         rb = GetComponent<Rigidbody>();
         
-
         destinoFinal = new Vector3(Random.Range(-30f,30f), 0, 30f);
 
-
+        Debug.Log(randomX);
        
     }
+
 
     // Update is called once per frame
     void Update()
     {
 
+
+
+
+
         //TIempos
         lerpTime += Time.deltaTime;
-
-
 
 
         minBass = getMin(_processOrbe.MeanLevels[0], minBass);
@@ -99,30 +112,24 @@ public class orbeScript : MonoBehaviour
 
         cameraPos = maincam.transform.position;
 
-       
-        //speed += Time.deltaTime;
-  
-        float y = 
-            (currentBass
-            -Mathf.Lerp(
-                transform.position.y-(currentBass), 
-                transform.position.z, 
-                smoothSpeed
-            )
-            +Mathf.Sin(Time.fixedTime*ySinFreq)*Time.deltaTime)
-            
-        ;
+        //Debug.Log(maxMed);
+        //Debug.Log(currentMed);
 
+       
+  
+        /***********************/
+        //Y
         float sinY = Mathf.Sin(Time.fixedTime*ySinFreq)*(ySinMultiplier/10);
-        float minMaxY = getYminMAX(currentBass,maxBass);
-        float minMaxYResult = (minMaxY*speed) * Time.deltaTime;
+        float minMaxY = getYminMAX(currentBass,maxBass,maxMed);
+        float minMaxYResult = (minMaxY*speed);
         
-        
+        float y = (sinY)+(minMaxYResult);
+        //limitsY
+        Debug.Log(currentBass);
+
+        /***********************/
+        //Z
         float explosiveZ = (Mathf.Lerp(10,0, lerpTime)*Time.deltaTime);
-        
-        Debug.Log(explosiveZ);
- 
-              
         float z = (maincam.transform.position.z-2f) + (speedMultiplier*speed);
 
         //MOVIMIENTO BASE
@@ -141,7 +148,7 @@ public class orbeScript : MonoBehaviour
 
         //WITH ROTATION
      
-        Vector3 p = new Vector3(0, 0, explosiveZ+0.01f);
+        Vector3 p = new Vector3(0, y , explosiveZ+0.01f);
         
         /*totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
         
@@ -150,6 +157,22 @@ public class orbeScript : MonoBehaviour
         Vector3 newPosition = transform.position;
         */
         transform.Translate(p);
+
+
+        /*******************************/
+        /*******************************/
+        /******** cada  1 seg **********/
+        /*******************************/
+        /*******************************/
+        if (Time.time > nextTime ) {
+            nextTime += stepRumbo;
+            newRotationY = Random.Range(-10f*maxMed, 10f*maxMed)*Time.deltaTime;
+            
+
+        }
+
+        transform.Rotate(0, Mathf.Lerp(0, newRotationY, lerpTime), 0);
+
 
         //transform.rotation = Quaternion.LookRotation(new Vector3(maxBass/10,y*5,1));
         
@@ -191,16 +214,33 @@ public class orbeScript : MonoBehaviour
     }
 
  
+    /*
+    private float getYminMAX(float currentValue, float maxValue, float maxMedValue){
         
-    private float getYminMAX(float currentValue, float maxValue){
-        
-        if(currentValue*100 > maxValue/2){
-            Debug.Log("maxMaxY");
-            return Mathf.Lerp(currentValue, maxValue, currentValue*Time.deltaTime);
+        if(currentValue*20 > maxValue){
+            Debug.Log("maxMaxY: "+currentValue+"maxValue/2: "+maxValue/2);
+            return (currentValue*Time.deltaTime)*multiplyTest;
             //return maxValue*0.125f;
         }else{
-            Debug.Log("minMaxY");
-            return Mathf.Lerp(currentValue, ((maxValue*Time.deltaTime)*500)*-1, Time.deltaTime);
+            //Debug.Log("minMaxY");
+            Debug.Log("minMaxY: "+currentValue+"minMaxY/3: "+maxValue/3);
+            return ((currentValue*Time.deltaTime)*10)*-1;
+            return Mathf.Lerp(currentValue, ((maxValue*Time.deltaTime)*500)*-1, lerpTime/1000*Time.deltaTime);
+            //return ((maxValue*Time.deltaTime)*100)*-1;
+        }
+    }*/
+
+    private float getYminMAX(float currentValue, float maxValue, float maxMedValue){
+        
+        if(currentValue*yCurrentMultiplier > maxValue){
+            //Debug.Log("maxMaxY: "+currentValue+"maxValue/2: "+maxValue/2);
+            return (currentValue/maxValue*Time.deltaTime)*10;
+            //return maxValue*0.125f;
+        }else{
+            //Debug.Log("minMaxY");
+            //Debug.Log("minMaxY: "+currentValue+"minMaxY/3: "+maxValue/3);
+            return yFallStreng*Time.deltaTime*-1;
+            return Mathf.Lerp(currentValue, ((maxValue*Time.deltaTime)*500)*-1, lerpTime/1000*Time.deltaTime);
             //return ((maxValue*Time.deltaTime)*100)*-1;
         }
     }
@@ -237,7 +277,7 @@ public class orbeScript : MonoBehaviour
     float getCurrent(float min, float max, float value)
     {   
         float current = value;
-        if(value == 0f) return value;
+        if(value == 0f) return max;
         
         if (max/2 > value)
         {
@@ -250,10 +290,6 @@ public class orbeScript : MonoBehaviour
 
 
 
-    public static float EaseInQuad(float start, float end, float value)
-    {
-        end -= start;
-        return end * value * value + start;
-    }
+
 
 }

@@ -28,7 +28,9 @@ public class processAudio : MonoBehaviour
         [Header("===Time range===")]
         [Range(0.1f, 3.0f)] public float stepVolume = 1.0f;
         [Range(0.01f, 0.10f)] public float stepMain = 0.05f;
-
+        //cada cierto tiempo
+        private float nextTime = 0.0f;
+        private float currentUpdateTime = 0.0f;
 
         [Space(20)]
 
@@ -74,9 +76,7 @@ public class processAudio : MonoBehaviour
         private FFTWindow fftWindow;
 
 
-        //cada cierto tiempo
-        private float nextTime = 0.0f;
-        private float currentUpdateTime = 0.0f;
+
 
         private float ponderacionPOW=0.5f;
         private float recThreshold=0.1f;
@@ -387,9 +387,10 @@ public class processAudio : MonoBehaviour
             if (Time.time > nextTime ) {
                 
                 /*******************************/
+                nextTime += stepVolume;
                 // VOLUMEN 
                 spectrumDataAnterior = spectrumData;
-                nextTime += stepVolume;
+                
 
                 gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = averageVolume.ToString();
 
@@ -441,8 +442,7 @@ public class processAudio : MonoBehaviour
 
 
 
-
-
+        //TODO poner resto en coroutine
         public void guardarClip(){
             _scripts.mic.guardaClip();
             isRecording = false;

@@ -106,8 +106,8 @@ public class soundBarCreation : MonoBehaviour
         int fundamentalWidth = totalBars/8;
         int totalFundamental = totalBars/8;
 
-        Debug.Log("totalFundamental: "+totalFundamental);
-        Debug.Log("totalBars: "+totalBars);
+        //Debug.Log("totalFundamental: "+totalFundamental);
+        //Debug.Log("totalBars: "+totalBars);
 
 
         int fundContador = 0;
@@ -118,7 +118,6 @@ public class soundBarCreation : MonoBehaviour
             soundBarPrefab.GetComponent<RectTransform>().sizeDelta = new Vector2(anchoBars, 10);
             soundBarPrefab.GetComponent<soundBarManager>().arrayNumber = (mic.checkSamplesRange()/totalBars)*i;
             soundBarPrefab.GetComponent<soundBarManager>().currentWidth = anchoBars;
-
             soundBarPrefab.transform.SetParent (SoundBarCanvas.transform, false);
 
 

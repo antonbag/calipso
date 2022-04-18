@@ -38,12 +38,12 @@ public class processOrbe : MonoBehaviour
     public float sensibility = 8.0f;
     #endregion
 
-    #region Private variables
+ 
     float[] rawSpectrum;
     float[] levels;
     float[] peakLevels;
     float[] meanLevels;
-    #endregion
+
 
     #region Public property
     public float[] Levels {
@@ -60,6 +60,9 @@ public class processOrbe : MonoBehaviour
     #endregion
 
 
+
+
+    //TESTS dev
     public GameObject hexatest;
     public GameObject hexatest1;
     public GameObject hexatest2;
@@ -70,10 +73,10 @@ public class processOrbe : MonoBehaviour
     public GameObject hexatest7;
     public GameObject hexatest8;
 
-    public AudioListener _calipsoAudioListener;
+    
 
 
-    #region Private functions
+    //Private functions
     void CheckBuffers ()
     {
         if (rawSpectrum == null || rawSpectrum.Length != numberOfSamples) {
@@ -92,13 +95,23 @@ public class processOrbe : MonoBehaviour
         var i = Mathf.FloorToInt (f / AudioSettings.outputSampleRate * 2.0f * rawSpectrum.Length);
         return Mathf.Clamp (i, 0, rawSpectrum.Length - 1);
     }
-    #endregion
 
-    #region Monobehaviour functions
+
+
+
+
+
+
+
+
+  
     void Awake ()
     {
         CheckBuffers ();
     }
+
+
+
 
 
 
@@ -129,7 +142,7 @@ public class processOrbe : MonoBehaviour
             meanLevels[bi] = bandMax - (bandMax - meanLevels [bi]) * filter;
         }
 
-
+/*
         hexatest.transform.localScale = new Vector3 (1, 1, meanLevels[0]*100);
         hexatest1.transform.localScale = new Vector3 (1, 1, meanLevels[1]*100);
         hexatest2.transform.localScale = new Vector3 (1, 1, meanLevels[2]*100);
@@ -139,11 +152,11 @@ public class processOrbe : MonoBehaviour
         hexatest6.transform.localScale = new Vector3 (1, 1, meanLevels[6]*100);
         hexatest7.transform.localScale = new Vector3 (1, 1, meanLevels[7]*100);
         hexatest8.transform.localScale = new Vector3 (1, 1, meanLevels[8]*100);
+*/
 
-
-        Debug.Log ("Levels: " + meanLevels.Length);
+        //Debug.Log ("Levels: " + meanLevels.Length);
     }
 
 
-    #endregion
+ 
 }

@@ -183,19 +183,14 @@ public class processAudio : MonoBehaviour
                     (spectrum[150]*10) <= recThreshold &&
                     !isRecording
                 ){
-
-
-                    Debug.Log("No hay sonido:"+(spectrum[150]*10)+"<"+recThreshold);
+                    //Debug.Log("No hay sonido:"+(spectrum[150]*10)+"<"+recThreshold);
                     return;
-                    //si estoy grabando y se acaba el sonido
-                    if(isRecording && (recordingMinimum >= recordingMinimumCounter)){
-                        guardarClip();
-                    }else{
-
-
-                        
-                    }
-
+                    /*
+                        //si estoy grabando y se acaba el sonido
+                        if(isRecording && (recordingMinimum >= recordingMinimumCounter)){
+                            guardarClip();
+                        }else{}
+                    */
 
 
                     
@@ -419,7 +414,7 @@ public class processAudio : MonoBehaviour
                     isRecording && 
                     (recordingCounter < recordingLimit)
                 ){
-                    Debug.Log("sigo grabando: "+ recordingCounter);
+                    //Debug.Log("sigo grabando: "+ recordingCounter);
                     recordingCounter++;
                     recordingMinimumCounter++;
                 }

@@ -57,7 +57,7 @@ public class orbesManager : MonoBehaviour
         //orbeInstaGroup.GetComponentInChildren<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
         //orbeInstaGroup.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
 
-         orbeInstaGroup.transform.SetParent (orbesWrapper.transform, false);
+        orbeInstaGroup.transform.SetParent (orbesWrapper.transform, false);
 
     } 
 

@@ -100,19 +100,11 @@ public class processOrbe : MonoBehaviour
 
 
 
-
-
-
-
-
   
     void Awake ()
     {
         CheckBuffers ();
     }
-
-
-
 
 
 
@@ -139,7 +131,7 @@ public class processOrbe : MonoBehaviour
             }
 
             levels[bi] = bandMax;
-            peakLevels[bi] = Mathf.Max (peakLevels [bi] - falldown, bandMax);
+            peakLevels[bi] = Mathf.Max(peakLevels [bi] - falldown, bandMax);
             meanLevels[bi] = bandMax - (bandMax - meanLevels [bi]) * filter;
         }
 

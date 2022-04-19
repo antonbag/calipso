@@ -11,6 +11,7 @@ public class PlayerPrefsManager : MonoBehaviour {
 	const string THRESHOLD_KEY 		= "threshold";
 	const string LIMITFQ_KEY 		= "limitFq";
 	const string AUTOVOLUME_KEY 	= "autovolume";
+	const string RECORDING_KEY 		= "recording";
 
 	public static void SetMicrophone (int mic) {
 		PlayerPrefs.SetInt (MICROPHONE_KEY, mic);
@@ -106,7 +107,18 @@ public class PlayerPrefsManager : MonoBehaviour {
 		}else{
 			return false;
 		}
-		
+	}
+
+	public static void SetRecording (int recording) {
+		PlayerPrefs.SetInt (RECORDING_KEY, recording);
+	}
+
+	public static bool GetRecording (){
+		if(PlayerPrefs.GetInt (RECORDING_KEY) == 1){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	

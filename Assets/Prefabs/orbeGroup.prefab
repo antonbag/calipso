@@ -58,7 +58,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 10
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -93,7 +93,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -108,7 +108,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.1375
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -123,7 +123,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 1.011
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -163,7 +163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedMultiplier: 1
   speed: 1
-  cannonfired: 0
   smoothSpeed: 0.125
   ySinFreq: 1
   ySinMultiplier: 0.1
@@ -171,6 +170,7 @@ MonoBehaviour:
   yFallStreng: 0.7
   multiplyTest: 1
   stepRumbo: 1
+  lerpTime: 0
 --- !u!135 &4275985514286517556
 SphereCollider:
   m_ObjectHideFlags: 0

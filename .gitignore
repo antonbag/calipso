@@ -74,7 +74,7 @@ crashlytics-build.properties
 
 #SOUNDS
 /[Aa]ssets/[Ss]ounds/*
-
+/[Aa]ssets/[Rr]esources/[Ss]ounds/*
 
 
 

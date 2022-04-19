@@ -26,7 +26,7 @@ public class orbeScript : MonoBehaviour
 
 
     //SMOTHNESS
-    Vector3 cameraPos;
+    
     public float smoothSpeed = 0.125f;
 
     float randomX;
@@ -35,9 +35,6 @@ public class orbeScript : MonoBehaviour
     //ROTATION
     private float totalRun = 1.0f;
  
-    ConstantForce force;
-    Rigidbody rb;
-
     Vector3 positionInicial;
     Vector3 destinoFinal;
     Vector3 haciaDestino;
@@ -57,7 +54,7 @@ public class orbeScript : MonoBehaviour
     [Header("===Times range===")]
         [Range(0.1f, 3.0f)] public float stepRumbo = 1.0f;
         private float nextTime = 0.0f;
-        private float lerpTime = 0.0f;
+        public float lerpTime = 0.0f;
 
 
 
@@ -74,18 +71,16 @@ public class orbeScript : MonoBehaviour
         //positionInicial = new Vector3(maincam.transform.position.x, maincam.transform.position.y+Random.Range(-1.0f, 1.0f), (maincam.transform.position.z-2.0f) + speedMultiplier);
         //transform.position = positionInicial;
 
-         _processOrbe = GetComponent<processOrbe>();
+        _processOrbe = GetComponent<processOrbe>();
 
         randomX = Random.Range(-50.0f, 50.0f);
 
         transform.Rotate(0, randomX, 0);
 
-        force = GetComponent<ConstantForce>();
-        rb = GetComponent<Rigidbody>();
         
         destinoFinal = new Vector3(Random.Range(-30f,30f), 0, 30f);
 
-        Debug.Log(randomX);
+ 
        
     }
 
@@ -93,9 +88,6 @@ public class orbeScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
-
 
 
         //TIempos
@@ -110,7 +102,7 @@ public class orbeScript : MonoBehaviour
         maxMed = getMax(_processOrbe.MeanLevels[2], maxMed);
         currentMed = getCurrent(minMed, maxMed, _processOrbe.MeanLevels[2])*100000;
 
-        cameraPos = maincam.transform.position;
+  
 
         //Debug.Log(maxMed);
         //Debug.Log(currentMed);
@@ -119,18 +111,17 @@ public class orbeScript : MonoBehaviour
   
         /***********************/
         //Y
-        float sinY = Mathf.Sin(Time.fixedTime*ySinFreq)*(ySinMultiplier/10);
+        float sinY = Mathf.Sin(lerpTime*ySinFreq)*(ySinMultiplier/10);
         float minMaxY = getYminMAX(currentBass,maxBass,maxMed);
         float minMaxYResult = (minMaxY*speed);
         
         float y = (sinY)+(minMaxYResult);
-        //limitsY
-        Debug.Log(currentBass);
 
+        //limitsY
         /***********************/
         //Z
         float explosiveZ = (Mathf.Lerp(10,0, lerpTime)*Time.deltaTime);
-        float z = (maincam.transform.position.z-2f) + (speedMultiplier*speed);
+        float z = (2f) + (speedMultiplier*speed);
 
         //MOVIMIENTO BASE
         float step =  speed * Time.deltaTime; // calculate distance to move
@@ -141,15 +132,30 @@ public class orbeScript : MonoBehaviour
         Vector3 desiredPosition = destinoFinal;
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
         transform.position = smoothedPosition;
-      
 */
 
 
 
+
+
+
         //WITH ROTATION
-     
-        Vector3 p = new Vector3(0, y , explosiveZ+0.01f);
-        
+        //Vector3 p = new Vector3(0, y , explosiveZ+0.01f);
+
+        //test
+        Vector3 p = new Vector3(0, sinY , explosiveZ+0.01f);
+
+
+
+
+
+
+
+
+
+
+
+
         /*totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
         
         p = p * 1.0f;
@@ -158,6 +164,7 @@ public class orbeScript : MonoBehaviour
         */
         transform.Translate(p);
 
+        //Debug.Log(explosiveZ);
 
         /*******************************/
         /*******************************/
@@ -167,8 +174,6 @@ public class orbeScript : MonoBehaviour
         if (Time.time > nextTime ) {
             nextTime += stepRumbo;
             newRotationY = Random.Range(-10f*maxMed, 10f*maxMed)*Time.deltaTime;
-            
-
         }
 
         transform.Rotate(0, Mathf.Lerp(0, newRotationY, lerpTime), 0);

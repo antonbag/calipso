@@ -8,7 +8,7 @@ public class orbeScript : MonoBehaviour
 
     private Camera maincam;
     public float speedMultiplier = 1.0f;
-    public float speed = 1.0f;
+    public float speed = 0.5f;
 
     private processOrbe _processOrbe;
     calipsoManager cm;
@@ -33,8 +33,6 @@ public class orbeScript : MonoBehaviour
 
 
     //ROTATION
-    private float totalRun = 1.0f;
- 
     Vector3 positionInicial;
     Vector3 destinoFinal;
     Vector3 haciaDestino;
@@ -57,11 +55,19 @@ public class orbeScript : MonoBehaviour
         public float lerpTime = 0.0f;
 
 
+    [Header("===Collisions===")]
 
+    private Rigidbody rb;
+
+    [Header("===Materials===")]
+
+    public Material hexagonRegularMaterial;
+    public Material hexagonShaderMaterial;
 
     void Awake() {
         maincam = Camera.main;
-        cm = FindObjectOfType<calipsoManager>();
+        cm      = FindObjectOfType<calipsoManager>();
+        rb      = GetComponent<Rigidbody>();
     }
 
     // Start is called before the first frame update
@@ -81,7 +87,25 @@ public class orbeScript : MonoBehaviour
         destinoFinal = new Vector3(Random.Range(-30f,30f), 0, 30f);
 
  
-       
+
+        //collision tests
+  
+            GameObject orbeSphere = gameObject.transform.GetChild(0).gameObject;
+            Material mat = orbeSphere.GetComponent<Renderer>().material;
+
+            GameObject orbeLight = gameObject.transform.GetChild(1).gameObject;
+        
+            GameObject monolito = GameObject.Find("hexatileTest");
+            //monolito
+        
+            //Material hexaDefault = Resources.Load("hexaShader") as Material;
+            monolito.GetComponent<Renderer>().material = hexagonShaderMaterial;
+            monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(mat);
+    
+  
+        //dev
+        speed = 0.5f;
+  
     }
 
 
@@ -121,39 +145,25 @@ public class orbeScript : MonoBehaviour
         /***********************/
         //Z
         float explosiveZ = (Mathf.Lerp(10,0, lerpTime)*Time.deltaTime);
-        float z = (2f) + (speedMultiplier*speed);
+        float z = (speed*Time.deltaTime)*speedMultiplier+explosiveZ;
 
         //MOVIMIENTO BASE
         float step =  speed * Time.deltaTime; // calculate distance to move
         haciaDestino = Vector3.MoveTowards(transform.position, destinoFinal, step);
 
 
-/*
+        /*
         Vector3 desiredPosition = destinoFinal;
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
         transform.position = smoothedPosition;
-*/
-
-
-
-
+        */
 
 
         //WITH ROTATION
         //Vector3 p = new Vector3(0, y , explosiveZ+0.01f);
 
         //test
-        Vector3 p = new Vector3(0, sinY , explosiveZ+0.01f);
-
-
-
-
-
-
-
-
-
-
+        Vector3 p = new Vector3(0, sinY , z);
 
 
         /*totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
@@ -165,6 +175,12 @@ public class orbeScript : MonoBehaviour
         transform.Translate(p);
 
         //Debug.Log(explosiveZ);
+
+
+
+
+
+
 
         /*******************************/
         /*******************************/
@@ -181,8 +197,7 @@ public class orbeScript : MonoBehaviour
 
         //transform.rotation = Quaternion.LookRotation(new Vector3(maxBass/10,y*5,1));
         
-/*      
-        
+        /*      
         float cosa = cm.mapToDigital(transform.position.z, positionInicial.z, destinoFinal.z, 0, 1);
         Debug.Log(cosa);
         
@@ -195,8 +210,8 @@ public class orbeScript : MonoBehaviour
 
         //force.force = new Vector3(0, Mathf.Lerp(50,5,1), 1);
 
-*/
-/*
+        */
+        /*
 
         //rb.AddForce(0, Mathf.Sin(Time.deltaTime), 1f, ForceMode.Impulse);
 
@@ -213,11 +228,35 @@ public class orbeScript : MonoBehaviour
         rb.AddForce(new Vector3(0,1,1));
 
         Debug.Log(toTarget.z);
-*/
+        */
+
+
+
 
 
     }
 
+
+    /*******************************/
+    /*******************************/
+    /******** COLLISIONS **********/
+    /*******************************/
+    /*******************************/
+    void OnTriggerEnter (Collider otherObject)
+    {
+ 
+        GameObject orbeSphere = gameObject.transform.GetChild(0).gameObject;
+        Material mat = orbeSphere.GetComponent<Renderer>().material;
+
+        GameObject orbeLight = gameObject.transform.GetChild(1).gameObject;
+    
+        GameObject monolito = otherObject.gameObject;
+
+        monolito.GetComponent<Renderer>().material = hexagonShaderMaterial;
+        //monolito
+        monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(mat);
+
+    }
  
     /*
     private float getYminMAX(float currentValue, float maxValue, float maxMedValue){
@@ -245,7 +284,7 @@ public class orbeScript : MonoBehaviour
             //Debug.Log("minMaxY");
             //Debug.Log("minMaxY: "+currentValue+"minMaxY/3: "+maxValue/3);
             return yFallStreng*Time.deltaTime*-1;
-            return Mathf.Lerp(currentValue, ((maxValue*Time.deltaTime)*500)*-1, lerpTime/1000*Time.deltaTime);
+            //return Mathf.Lerp(currentValue, ((maxValue*Time.deltaTime)*500)*-1, lerpTime/1000*Time.deltaTime);
             //return ((maxValue*Time.deltaTime)*100)*-1;
         }
     }

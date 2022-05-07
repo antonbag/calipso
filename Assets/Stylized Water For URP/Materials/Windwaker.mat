@@ -10,6 +10,9 @@ Material:
   m_Name: Windwaker
   m_Shader: {fileID: -6465566751694194690, guid: b85c5e2c0d0c9774ab24e77078fc44cb, type: 3}
   m_ValidKeywords:
+  - FOAM_SHADOWS_ON
+  - INTERSECTION_EFFECTS_ON
+  - SURFACE_FOAM_ON
   - WATER_LIGHTING_ON
   - WORLD_SPACE_UV_ON
   m_InvalidKeywords: []
@@ -68,7 +71,7 @@ Material:
     - _CausticsShadowMask: 1
     - _CausticsSpeed: 0.219
     - _CausticsSplit: 0.318
-    - _CausticsStrength: 2.09
+    - _CausticsStrength: 0.98
     - _FoamShadowDepth: 10
     - _FoamShadowStrength: 0.45
     - _IntersectionFoamBlend: 1

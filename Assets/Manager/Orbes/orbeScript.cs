@@ -263,7 +263,8 @@ public class orbeScript : MonoBehaviour
 
         //COPY PROPERTIES
         //monolito.GetComponent<Renderer>().material = hexagonShaderMaterial;
-        //monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(orbeMat);
+        monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(orbeMat);
+        monolito.GetComponent<Renderer>().material.color = new Vector4(orbeMat.color.r, orbeMat.color.g, orbeMat.color.b, orbeMat.color.a*0.1f);
         monolito.GetComponent<AudioSource>().clip = orbeClip;
         monolito.GetComponent<hexaScript>().isActive = true;
 

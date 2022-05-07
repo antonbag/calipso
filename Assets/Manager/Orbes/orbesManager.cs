@@ -10,6 +10,8 @@ public class orbesManager : MonoBehaviour
 
     public Camera maincam;
 
+    public Material[] materials;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +33,7 @@ public class orbesManager : MonoBehaviour
         int randomX = Random.Range(1, 5);
 
 
-        Color randomColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
+        Color randomColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f),Random.Range(0.0f, 1.0f));
 
         AudioClip createdClip = (AudioClip) Resources.Load("sounds/"+randomX);
 
@@ -42,11 +44,9 @@ public class orbesManager : MonoBehaviour
         //PLAY ON FINAL 
         orbeInstaGroup.GetComponent<AudioSource>().Play();
 
-
         GameObject orbeSphere = orbeInstaGroup.transform.GetChild(0).gameObject;
         GameObject orbeLight = orbeInstaGroup.transform.GetChild(1).gameObject;
         
-
 
         //LIGHT
         orbeLight.GetComponentInChildren<Light>().color = randomColor;
@@ -54,9 +54,9 @@ public class orbesManager : MonoBehaviour
   
 
         //MATERIAL
-
-
-        orbeSphere.GetComponentInChildren<Renderer>().material.SetColor("_color2", randomColor);
+        //Material newRandomMaterial = new Material(
+        orbeSphere.GetComponentInChildren<Renderer>().material = materials[Random.Range(0, materials.Length)];
+        orbeSphere.GetComponentInChildren<Renderer>().material.SetColor("_emission", randomColor);
 
         //orbeInstaGroup.GetComponentInChildren<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
         //orbeInstaGroup.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));

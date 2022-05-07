@@ -4984,6 +4984,7 @@ GameObject:
   - component: {fileID: 4275985514286517555}
   - component: {fileID: 4275985514286517556}
   - component: {fileID: 6305195815203273569}
+  - component: {fileID: 1087718859114354123}
   m_Layer: 0
   m_Name: orbeGroup
   m_TagString: Untagged
@@ -5133,8 +5134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad994d85f91d1bd14a9a064dfd310580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedMultiplier: 10
-  speed: 10
+  speedMultiplier: 2
+  speed: 2
   smoothSpeed: 0.125
   ySinFreq: 1
   ySinMultiplier: 0.2
@@ -5143,6 +5144,7 @@ MonoBehaviour:
   multiplyTest: 1
   stepRumbo: 1
   lerpTime: 0
+  canCollide: 1
   hexagonRegularMaterial: {fileID: 2100000, guid: 160714b9347b13fa5838d27e925226e2, type: 2}
   hexagonShaderMaterial: {fileID: 2100000, guid: 4e74d621a0d55557ea84c4abe5abb67e, type: 2}
 --- !u!135 &4275985514286517556
@@ -5174,6 +5176,101 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1087718859114354123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4275985514286517553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc4d76f733087744991913c9d19d5274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_LensFlareData: {fileID: 11400000, guid: 7f8cf9f949e17a66aa6e6ac1c6b5d567, type: 2}
+  intensity: 0.03
+  maxAttenuationDistance: 100
+  maxAttenuationScale: 100
+  distanceAttenuationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  scaleByDistanceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  attenuationByLightShape: 1
+  radialScreenAttenuationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  useOcclusion: 0
+  occlusionRadius: 0.1
+  sampleCount: 32
+  occlusionOffset: 0.05
+  scale: 0.09
+  allowOffScreen: 0
 --- !u!1 &4275985515713843333
 GameObject:
   m_ObjectHideFlags: 0
@@ -5322,7 +5419,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1

@@ -96,6 +96,7 @@ public class createCave : MonoBehaviour
                     instaTile.transform.localScale.y, 
                     Random.Range(0.6f, 1.5f)+((exponencial+exponencialX+exponencialSin)/3)
                 );
+
                 
                 instaTile.transform.SetParent (transform, false);
 

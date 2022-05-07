@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.unity.collab-proxy": "1.15.16",
+    "com.unity.collab-proxy": "1.15.17",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.probuilder": "5.0.4",
     "com.unity.render-pipelines.universal": "12.1.6",

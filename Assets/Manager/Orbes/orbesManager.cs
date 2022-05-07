@@ -29,7 +29,10 @@ public class orbesManager : MonoBehaviour
     public void createOrbe(){
 
         int randomX = Random.Range(1, 5);
+
+
         Color randomColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
+
         AudioClip createdClip = (AudioClip) Resources.Load("sounds/"+randomX);
 
         Vector3 positionInicial = new Vector3(0, Random.Range(-1.0f, 1.0f), (2.0f));
@@ -51,8 +54,9 @@ public class orbesManager : MonoBehaviour
   
 
         //MATERIAL
-        orbeSphere.GetComponentInChildren<Renderer>().material.SetColor("_color2", randomColor);
 
+
+        orbeSphere.GetComponentInChildren<Renderer>().material.SetColor("_color2", randomColor);
 
         //orbeInstaGroup.GetComponentInChildren<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));
         //orbeInstaGroup.GetComponent<Renderer>().material.color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f));

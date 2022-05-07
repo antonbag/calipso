@@ -58,6 +58,7 @@ public class orbeScript : MonoBehaviour
     [Header("===Collisions===")]
 
     private Rigidbody rb;
+    public bool canCollide = true;
 
     [Header("===Materials===")]
 
@@ -89,7 +90,7 @@ public class orbeScript : MonoBehaviour
  
 
         //collision tests
-  
+        /*
             GameObject orbeSphere = gameObject.transform.GetChild(0).gameObject;
             Material mat = orbeSphere.GetComponent<Renderer>().material;
 
@@ -101,7 +102,7 @@ public class orbeScript : MonoBehaviour
             //Material hexaDefault = Resources.Load("hexaShader") as Material;
             monolito.GetComponent<Renderer>().material = hexagonShaderMaterial;
             monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(mat);
-    
+        */
   
         //dev
         speed = 0.5f;
@@ -230,9 +231,9 @@ public class orbeScript : MonoBehaviour
         Debug.Log(toTarget.z);
         */
 
-
-
-
+        if(canCollide == false){
+            scaleAndDestroy();
+        }
 
     }
 
@@ -244,17 +245,33 @@ public class orbeScript : MonoBehaviour
     /*******************************/
     void OnTriggerEnter (Collider otherObject)
     {
- 
-        GameObject orbeSphere = gameObject.transform.GetChild(0).gameObject;
-        Material mat = orbeSphere.GetComponent<Renderer>().material;
+        
+        if(canCollide == false)
+        {
+            return;
+        }
 
-        GameObject orbeLight = gameObject.transform.GetChild(1).gameObject;
-    
+
+        //ORBE
+        GameObject  orbeSphere  = gameObject.transform.GetChild(0).gameObject;
+        GameObject  orbeLight   = gameObject.transform.GetChild(1).gameObject;
+        Material    orbeMat     = orbeSphere.GetComponent<Renderer>().material;
+        AudioClip   orbeClip    = gameObject.GetComponent<AudioSource>().clip;
+
+        //MONOLITO
         GameObject monolito = otherObject.gameObject;
 
-        monolito.GetComponent<Renderer>().material = hexagonShaderMaterial;
-        //monolito
-        monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(mat);
+        //COPY PROPERTIES
+        //monolito.GetComponent<Renderer>().material = hexagonShaderMaterial;
+        //monolito.GetComponent<Renderer>().material.CopyPropertiesFromMaterial(orbeMat);
+        monolito.GetComponent<AudioSource>().clip = orbeClip;
+        monolito.GetComponent<hexaScript>().isActive = true;
+
+        GameObject  hexaLight   = monolito.transform.GetChild(0).gameObject;
+        hexaLight.GetComponent<Light>().enabled = true;
+        hexaLight.GetComponent<Light>().color = orbeLight.GetComponent<Light>().color;
+
+        canCollide = false;
 
     }
  
@@ -273,6 +290,22 @@ public class orbeScript : MonoBehaviour
             //return ((maxValue*Time.deltaTime)*100)*-1;
         }
     }*/
+
+    private void scaleAndDestroy(){
+
+        transform.localScale = new Vector3(transform.localScale.x-Time.deltaTime,transform.localScale.y-Time.deltaTime,transform.localScale.z-Time.deltaTime);
+
+        if(transform.localScale.x < 0.01f){
+            Destroy(gameObject);
+        }
+
+        //DESTROY ORBE 
+        //Destroy(gameObject);
+
+    }
+
+
+
 
     private float getYminMAX(float currentValue, float maxValue, float maxMedValue){
         

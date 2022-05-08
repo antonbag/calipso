@@ -19,6 +19,10 @@ namespace Unity.CALIPSO{
         public GameObject canvasSettings;
         public GameObject fpsController;
 
+        private GameObject SoundBarCanvas;
+        private GameObject SoundBarBiasCanvas;
+
+
         /*
         [Header("==Sound DEFAULTS==")]
 
@@ -45,6 +49,9 @@ namespace Unity.CALIPSO{
             mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
             devCamera = GameObject.Find("DevCamera").GetComponent<Camera>();
 
+            SoundBarCanvas = GameObject.Find("SoundBarCanvas");
+            SoundBarBiasCanvas = GameObject.Find("SoundBarBiasCanvas");
+
             canvasSettings.SetActive(false);
 
             
@@ -56,6 +63,7 @@ namespace Unity.CALIPSO{
         void Update()
         {
             _deltaTime += (Time.deltaTime - _deltaTime) * 0.1f;
+
             //Enter in Dev Mode
             if (Input.GetKeyDown(KeyCode.E))
             {
@@ -100,10 +108,22 @@ namespace Unity.CALIPSO{
             if(DevMode)
             {
                 mainCamera.enabled = false;
+                mainCamera.GetComponent<AudioListener>().enabled = false;
                 devCamera.enabled = true;
+                devCamera.GetComponent<AudioListener>().enabled = true;
+
+                SoundBarCanvas.SetActive(true);
+                SoundBarBiasCanvas.SetActive(true);
+                
+
             }else{
                 mainCamera.enabled = true;
+                mainCamera.GetComponent<AudioListener>().enabled = true;
                 devCamera.enabled = false;
+                devCamera.GetComponent<AudioListener>().enabled = false;
+                
+                SoundBarCanvas.SetActive(false);
+                SoundBarBiasCanvas.SetActive(false);
             }
 
         }

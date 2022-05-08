@@ -32,6 +32,7 @@ MonoBehaviour:
   - {fileID: -6463782114708142485}
   - {fileID: 6035331615001072431}
   - {fileID: 3740276974989760368}
+  - {fileID: 6187432173690243015}
 --- !u!114 &3740276974989760368
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -49,29 +50,29 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 2
   intensity:
-    m_OverrideState: 1
-    m_Value: 10
-  scatter:
     m_OverrideState: 0
-    m_Value: 0.7
+    m_Value: 0.2
+  scatter:
+    m_OverrideState: 1
+    m_Value: 0.798
   clamp:
     m_OverrideState: 0
     m_Value: 65472
   tint:
     m_OverrideState: 0
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
+    m_Value: {r: 0.6698113, g: 0.2765778, b: 0, a: 1}
   highQualityFiltering:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 1
   skipIterations:
     m_OverrideState: 0
-    m_Value: 1
+    m_Value: 2
   dirtTexture:
-    m_OverrideState: 0
-    m_Value: {fileID: 0}
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: f2c40b951cee11943a1f6d5ec1b42f2c, type: 3}
   dirtIntensity:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 100
 --- !u!114 &6035331615001072431
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -98,5 +99,51 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0.474
   rounded:
+    m_OverrideState: 0
+    m_Value: 0
+--- !u!114 &6187432173690243015
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
+  m_Name: DepthOfField
+  m_EditorClassIdentifier: 
+  active: 1
+  mode:
+    m_OverrideState: 1
+    m_Value: 1
+  gaussianStart:
+    m_OverrideState: 1
+    m_Value: 10
+  gaussianEnd:
+    m_OverrideState: 1
+    m_Value: 69.9
+  gaussianMaxRadius:
+    m_OverrideState: 1
+    m_Value: 0.869
+  highQualitySampling:
+    m_OverrideState: 0
+    m_Value: 1
+  focusDistance:
+    m_OverrideState: 0
+    m_Value: 10
+  aperture:
+    m_OverrideState: 0
+    m_Value: 5.6
+  focalLength:
+    m_OverrideState: 0
+    m_Value: 50
+  bladeCount:
+    m_OverrideState: 0
+    m_Value: 5
+  bladeCurvature:
+    m_OverrideState: 0
+    m_Value: 1
+  bladeRotation:
     m_OverrideState: 0
     m_Value: 0

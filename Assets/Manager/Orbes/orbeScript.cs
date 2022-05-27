@@ -49,6 +49,8 @@ public class orbeScript : MonoBehaviour
 
     public float multiplyTest = 1f;
 
+    public bool devMovement = false;
+
     [Header("===Times range===")]
         [Range(0.1f, 3.0f)] public float stepRumbo = 1.0f;
         private float nextTime = 0.0f;
@@ -80,12 +82,14 @@ public class orbeScript : MonoBehaviour
 
         _processOrbe = GetComponent<processOrbe>();
 
-        randomX = Random.Range(-50.0f, 50.0f);
+        //DEV MODE OFF
+        if(devMovement == false){
+            randomX = Random.Range(-50.0f, 50.0f);      
+            transform.Rotate(0, randomX, 0);      
+            destinoFinal = new Vector3(Random.Range(-30f,30f), 0, 30f);
+        }
 
-        transform.Rotate(0, randomX, 0);
 
-        
-        destinoFinal = new Vector3(Random.Range(-30f,30f), 0, 30f);
 
  
 
@@ -113,6 +117,18 @@ public class orbeScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if(canCollide == false){
+            scaleAndDestroy();
+        }
+
+        //DEV MODE ON
+        if(devMovement == true){
+            Vector3 m = new Vector3(0, 0, Time.deltaTime*10);
+            transform.Translate(m);
+            return;
+        }
+
 
 
         //TIempos
@@ -173,9 +189,11 @@ public class orbeScript : MonoBehaviour
         p = p * Time.deltaTime;
         Vector3 newPosition = transform.position;
         */
+
+        
+
         transform.Translate(p);
 
-        //Debug.Log(explosiveZ);
 
 
 
@@ -192,6 +210,7 @@ public class orbeScript : MonoBehaviour
             nextTime += stepRumbo;
             newRotationY = Random.Range(-10f*maxMed, 10f*maxMed)*Time.deltaTime;
         }
+
 
         transform.Rotate(0, Mathf.Lerp(0, newRotationY, lerpTime), 0);
 
@@ -231,9 +250,7 @@ public class orbeScript : MonoBehaviour
         Debug.Log(toTarget.z);
         */
 
-        if(canCollide == false){
-            scaleAndDestroy();
-        }
+
 
     }
 
@@ -269,12 +286,16 @@ public class orbeScript : MonoBehaviour
         monolito.GetComponent<Renderer>().sharedMaterial.SetFloat("_offsetTimeX", 0.0f);
         monolito.GetComponent<Renderer>().sharedMaterial.SetFloat("_offsetTimeY", 0.0f);
 
-        monolito.GetComponent<AudioSource>().clip = orbeClip;
-        monolito.GetComponent<hexaScript>().isActive = true;
 
+        //LIGHT
         GameObject  hexaLight   = monolito.transform.GetChild(0).gameObject;
         hexaLight.GetComponent<Light>().enabled = true;
         hexaLight.GetComponent<Light>().color = orbeLight.GetComponent<Light>().color;
+
+        //SOUND
+        monolito.GetComponent<hexaScript>().soundList.Add(orbeClip);
+        monolito.GetComponent<AudioSource>().clip = orbeClip;
+        monolito.GetComponent<hexaScript>().isImpacted = true;
 
         canCollide = false;
 

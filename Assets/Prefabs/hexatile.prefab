@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5989290211949437435}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.063}
+  m_LocalPosition: {x: -0, y: -0, z: 1.248}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,10 +45,10 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.13522619, g: 0.8207547, b: 0.112273075, a: 1}
-  m_Intensity: 5
-  m_Range: 5
-  m_SpotAngle: 30
-  m_InnerSpotAngle: 21.80208
+  m_Intensity: 10
+  m_Range: 10
+  m_SpotAngle: 179
+  m_InnerSpotAngle: 170.80208
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -228,9 +228,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 0
-  isPlaying: 0
+  allowPlaying: 0
+  isImpacted: 0
   zeta: 0
   scaleZOriginal: 0
+  altoZ: 0.1
+  removeSoundClipEvery: 50000
+  soundList: []
 --- !u!82 &584012787831700453
 AudioSource:
   m_ObjectHideFlags: 0
@@ -245,7 +249,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

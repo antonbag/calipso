@@ -5142,6 +5142,7 @@ MonoBehaviour:
   yCurrentMultiplier: 20
   yFallStreng: 0.7
   multiplyTest: 1
+  devMovement: 0
   stepRumbo: 1
   lerpTime: 0
   canCollide: 1

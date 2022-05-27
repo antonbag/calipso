@@ -15,6 +15,19 @@ public class createCave : MonoBehaviour
 
     public float balanceoValor  = 1.5f;
 
+    public Material[] materials;
+
+    private int materialOfTheSeason = 0;
+
+
+    [Header("===Monolitos tiempos===")]
+
+    public float timeToEndCombustion = 2.0f;
+    public float speedToEndCombustion = 1.0f;
+    public float timeEndingCombustion = 10.0f;
+    //public float timeToEndCombustion = 2.0f;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,8 +35,14 @@ public class createCave : MonoBehaviour
 
         //position center of camera
         transform.position = new Vector3((maxAncho / 2) * -1.0f,-3,0);
-   
+        
+        
+        materialOfTheSeason = Random.Range(0, materials.Length);
+
         createHexatiles();
+
+
+ 
 
     }
 
@@ -32,16 +51,18 @@ public class createCave : MonoBehaviour
     {
         
 
-
-        //obtengo el volumen cada 0.05
+        /*
+        //update time
         currentUpdateTime += Time.deltaTime;
         if(currentUpdateTime >= 1.0f){
             currentUpdateTime = 0f;
-
-
             //Material imparMaterial = Resources.Load<Material>("Materials/tileImpar");
             //Material parMaterial = Resources.Load<Material>("Materials/tilePar");
+            destoyHexatiles();
+            createHexatiles();
         }
+        */
+  
 
 
     }
@@ -100,9 +121,21 @@ public class createCave : MonoBehaviour
                 
                 instaTile.transform.SetParent (transform, false);
 
+                //material del tile
+                instaTile.GetComponentInChildren<Renderer>().material = materials[materialOfTheSeason];
+
+                instaTile.GetComponentInChildren<Renderer>().material.SetFloat("_metallic", Random.Range(0f, 0.5f));
+                instaTile.GetComponentInChildren<Renderer>().sharedMaterial.SetFloat("_offsetTimeY", 0f);
+                instaTile.GetComponentInChildren<Renderer>().sharedMaterial.SetFloat("_offsetTimeX", 0f);
+
 
             }
         }
+
+
+
+
+
     }
 
 

@@ -12,6 +12,8 @@ public class settingController : MonoBehaviour
 	public Slider sensitivitySlider, soundBiasSlider, thresholdSlider, optimizeSampleSlider, limitFqSlider;
 	public Toggle autoVolumeToggle, recordingToggle;
 	public GameObject canvasSetting;
+	public GameObject gmThValue;
+
 	//public GameObject openButton;
 
 
@@ -66,6 +68,8 @@ public class settingController : MonoBehaviour
 		limitFqSlider.onValueChanged.AddListener(delegate {limitFqSliderValueChangedHandler(limitFqSlider);});
 		autoVolumeToggle.onValueChanged.AddListener(delegate {autoVolumeToggleValueChangedHandler(autoVolumeToggle);});
 		recordingToggle.onValueChanged.AddListener(delegate {recordingToggleValueChangedHandler(recordingToggle);});
+
+		gmThValue.GetComponent<TMPro.TextMeshProUGUI>().text = PlayerPrefsManager.GetThreshold().ToString();
 	}
 
 
@@ -88,11 +92,11 @@ public class settingController : MonoBehaviour
 		micDropdown.value = 0;
 		sensitivitySlider.value = 100f;
 		soundBiasSlider.value = 0.5f;
-		thresholdSlider.value = 0.1f;
+		thresholdSlider.value = 1.0f;
 		optimizeSampleSlider.value = 1;
 		numSamplesDropdown.value = 2; //1=128, 2=256, 3=512, 4=1024, 5=2048
 		limitFqSlider.value = 0.15f; // 1 = total
-		autoVolumeToggle.isOn = true;
+		//autoVolumeToggle.isOn = true;
 		autoVolumeToggle.isOn = false;
 
 		PlayerPrefsManager.SetMicrophone(micDropdown.value);
@@ -101,7 +105,7 @@ public class settingController : MonoBehaviour
 		PlayerPrefsManager.SetOptimizeSamples(optimizeSampleSlider.value);
 		PlayerPrefsManager.SetSamples(256);
 		PlayerPrefsManager.SetLimitFq(limitFqSlider.value);
-		PlayerPrefsManager.SetAutovolume(1);
+		PlayerPrefsManager.SetAutovolume(0);
 		PlayerPrefsManager.SetRecording(0);
 			
 	}
@@ -162,7 +166,12 @@ public class settingController : MonoBehaviour
 	//THRESHOLD
 	public void thresholdValueChangedHandler(Slider thresholdSlider){
 		threshold = thresholdSlider.value;
+		//threshold value in interface
+		PlayerPrefsManager.SetThreshold(threshold);
+		gmThValue.GetComponent<TMPro.TextMeshProUGUI>().text = threshold.ToString();
+
 	}
+
 	//OPTIMIZE SAMPLES
 	public void optimizeSampleSliderValueChangedHandler(Slider optimizeSampleSlider){
 		optimizeSample = optimizeSampleSlider.value;

@@ -12,6 +12,17 @@ public class orbesManager : MonoBehaviour
 
     public Material[] materials;
 
+    public string soundPath;
+    public AudioClip audioClip;
+
+    //wake up neo!
+    void Awake()
+    {
+        soundPath = "file://"+Application.persistentDataPath+"/CALIPSO_sounds/";
+    }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,25 +32,27 @@ public class orbesManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) {  
+        if (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftControl)) {  
             Debug.Log("orbe");
-            createOrbe();
+            int randomX = Random.Range(1, 5);
+            createOrbe(randomX);
         }  
     }
 
 
-    public void createOrbe(){
+    public void createOrbe(int clipNumber=0) {
 
-        int randomX = Random.Range(1, 5);
 
 
         Color randomColor = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f),Random.Range(0.0f, 1.0f));
 
-        AudioClip createdClip = (AudioClip) Resources.Load("sounds/"+randomX);
+        //AudioClip createdClip = (AudioClip) Resources.Load("sounds/"+randomX);
+        StartCoroutine(loadAudio(clipNumber+".wav"));
 
         Vector3 positionInicial = new Vector3(0, Random.Range(-1.0f, 1.0f), (2.0f));
         GameObject orbeInstaGroup = Instantiate(orbeGroup, positionInicial, Quaternion.identity) as GameObject;
-        orbeInstaGroup.GetComponent<AudioSource>().clip = createdClip;
+        
+        orbeInstaGroup.GetComponent<AudioSource>().clip = audioClip;
 
         //PLAY ON FINAL 
         orbeInstaGroup.GetComponent<AudioSource>().Play();
@@ -64,5 +77,24 @@ public class orbesManager : MonoBehaviour
         orbeInstaGroup.transform.SetParent (orbesWrapper.transform, false);
 
     } 
+
+
+    private IEnumerator loadAudio(string audioName){
+
+        WWW request = getAudioFromFile(soundPath, audioName);
+        yield return request;
+
+        audioClip = request.GetAudioClip();
+
+    }
+
+    private WWW getAudioFromFile(string path, string filename)
+    {
+        string audioToLoad = string.Format(path + "{0}", filename);
+        WWW request = new WWW(audioToLoad);
+        return request;
+    }
+
+
 
 }

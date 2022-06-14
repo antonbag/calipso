@@ -77,27 +77,6 @@ public class processOrbe : MonoBehaviour
     
 
 
-    //Private functions
-    void CheckBuffers ()
-    {
-        if (rawSpectrum == null || rawSpectrum.Length != numberOfSamples) {
-            rawSpectrum = new float[numberOfSamples];
-        }
-        var bandCount = middleFrequenciesForBands [(int)bandType].Length;
-        if (levels == null || levels.Length != bandCount) {
-            levels = new float[bandCount];
-            peakLevels = new float[bandCount];
-            meanLevels = new float[bandCount];
-        }
-    }
-
-    int FrequencyToSpectrumIndex (float f)
-    {
-        var i = Mathf.FloorToInt (f / AudioSettings.outputSampleRate * 2.0f * rawSpectrum.Length);
-        return Mathf.Clamp (i, 0, rawSpectrum.Length - 1);
-    }
-
-
 
 
   
@@ -150,6 +129,27 @@ public class processOrbe : MonoBehaviour
         //Debug.Log ("Levels: " + meanLevels.Length);
     }
 
+
+
+    //Private functions
+    void CheckBuffers ()
+    {
+        if (rawSpectrum == null || rawSpectrum.Length != numberOfSamples) {
+            rawSpectrum = new float[numberOfSamples];
+        }
+        var bandCount = middleFrequenciesForBands [(int)bandType].Length;
+        if (levels == null || levels.Length != bandCount) {
+            levels = new float[bandCount];
+            peakLevels = new float[bandCount];
+            meanLevels = new float[bandCount];
+        }
+    }
+
+    int FrequencyToSpectrumIndex (float f)
+    {
+        var i = Mathf.FloorToInt (f / AudioSettings.outputSampleRate * 2.0f * rawSpectrum.Length);
+        return Mathf.Clamp (i, 0, rawSpectrum.Length - 1);
+    }
 
  
 }

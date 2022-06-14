@@ -74,7 +74,7 @@ public class devCameraScript : MonoBehaviour
             var mouseMoveY = invertY ? -1 * Input.GetAxis("Mouse Y") : Input.GetAxis("Mouse Y");
             var mouseMoveX = Input.GetAxis("Mouse X");
 
-            var mouseMove = new Vector3(mouseMoveY, mouseMoveX, 0) * camSens;
+            var mouseMove = new Vector3(mouseMoveY*3.0f, mouseMoveX, 0) * camSens;
             transform.eulerAngles = transform.eulerAngles + mouseMove;
             
 

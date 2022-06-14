@@ -46,7 +46,7 @@ public class PlayerPrefsManager : MonoBehaviour {
 	}
 
 	public static void SetThreshold (float threshold) {
-		if (threshold >= 0f && threshold <= 1f) {
+		if (threshold >= 0f && threshold <= 10f) {
 			PlayerPrefs.SetFloat (THRESHOLD_KEY, threshold);
 		} else {
 			Debug.LogError("Threshold "+threshold.ToString()+" out of range");

@@ -28,7 +28,7 @@ namespace Unity.CALIPSO.MIC{
 		public bool IsWorking = true;
 		bool _lastValueOfIsWorking;
 
-		public bool RaltimeOutput = true;
+		public bool RealtimeOutput = true;
 		bool _lastValueOfRaltimeOutput;
  
 
@@ -74,14 +74,14 @@ namespace Unity.CALIPSO.MIC{
 		{
 			#if !UNITY_WEBGL
 					
-					_audioSource.clip = Microphone.Start(sc.getMicrophone(), true, 3, sc.audioSampleRate);
-					_audioSource.loop = true;
-					IsWorking = true;
-					while (!(Microphone.GetPosition(sc.getMicrophone()) > 0))
-					{
-						//Debug.Log ("recording started with " + microphone);
-						_audioSource.Play();
-					}
+				_audioSource.clip = Microphone.Start(sc.getMicrophone(), true, 3, sc.audioSampleRate);
+				_audioSource.loop = true;
+				IsWorking = true;
+				while (!(Microphone.GetPosition(sc.getMicrophone()) > 0))
+				{
+					//Debug.Log ("recording started with " + microphone);
+					_audioSource.Play();
+				}
 					
 			#endif
 		}
@@ -134,7 +134,7 @@ namespace Unity.CALIPSO.MIC{
 
  
 
-		public void guardaClip()
+		public int guardaClip()
 		{
 			WorkStop();
 			//COMPRUEBO QUE EXISTE EL DIRECTORY
@@ -159,6 +159,7 @@ namespace Unity.CALIPSO.MIC{
 			Debug.Log("Clip Guardado!!!!!"+ cm.orbeNumber);
 			WorkStart();
 			
+			return cm.orbeNumber;
 		}
 
 	}

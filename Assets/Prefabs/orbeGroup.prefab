@@ -5119,7 +5119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberOfSamples: 256
-  bandType: 3
+  bandType: 2
   fallSpeed: 0.08
   sensibility: 8
 --- !u!114 &4275985514286517555
@@ -5134,8 +5134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad994d85f91d1bd14a9a064dfd310580, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedMultiplier: 10
-  speed: 2
+  speedMultiplier: 2
+  speed: 1
   smoothSpeed: 0.125
   ySinFreq: 1
   ySinMultiplier: 0.2
@@ -5414,7 +5414,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.13522619, g: 0.8207547, b: 0.112273075, a: 1}
-  m_Intensity: 10
+  m_Intensity: 50.2
   m_Range: 5
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

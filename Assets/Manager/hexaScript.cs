@@ -34,6 +34,8 @@ public class hexaScript : MonoBehaviour
 
     public List<AudioClip> soundList = new List<AudioClip>(); //listado de sonidos
 
+    private float tileLerp = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +47,8 @@ public class hexaScript : MonoBehaviour
         cc = GetComponentInParent<createCave>();
 
         hexaLight = gameObject.transform.GetChild(0).gameObject;
+
+
     }
 
     // Update is called once per frame
@@ -56,6 +60,7 @@ public class hexaScript : MonoBehaviour
         if(isImpacted){
             currentUpdateTime = 0f;
             contadorApagarse = 0f;
+            contaRemoveSoundClip = 0f;
 
             allowPlaying = true;
             isActive = true;
@@ -63,7 +68,14 @@ public class hexaScript : MonoBehaviour
 
             hexaLight.GetComponent<Light>().enabled = true;
 
+            //defino el altoZ
             altoZ = altoZ+(altoZ/soundList.Count);
+
+            //modifico el tile del shader. Contra más sonidos, más tile
+            transform.GetComponentInChildren<Renderer>().material.SetFloat("_tiletext",soundList.Count);
+  
+
+ 
         }
 
 
@@ -95,6 +107,8 @@ public class hexaScript : MonoBehaviour
                 //transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(transform.localScale.x,transform.localScale.y, (scaleZOriginal+(scaleZOriginal+altoZ))), Time.deltaTime*distancia);
                 transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(transform.localScale.x,transform.localScale.y, scaleZOriginal+altoZ), Time.deltaTime);
             //}
+ 
+
 
 
 
@@ -125,7 +139,9 @@ public class hexaScript : MonoBehaviour
 
 
         //contador to remove sound clips
-        contaRemoveSoundClip += Time.fixedTime;
+        contaRemoveSoundClip += 0.01f; 
+
+        //Debug.Log(contaRemoveSoundClip);
 
         if(contaRemoveSoundClip >= removeSoundClipEvery){
             contaRemoveSoundClip = 0f;
@@ -136,9 +152,10 @@ public class hexaScript : MonoBehaviour
                 if(altoZ <= 1.0f){
                     altoZ = 1.0f;
                 }
+                Debug.Log(soundList[0].name +"removed");
                 soundList.RemoveAt(0);
                 isActive = true;
-                Debug.Log(soundList[0].name +"removed");
+
             }else{
                 isActive = false;
                 Debug.Log("no sounds to remove");

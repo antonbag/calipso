@@ -113,8 +113,8 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - _metallic: 0.189
-    - _normalStrength: 2
+    - _metallic: 0.454
+    - _normalStrength: 1.384
     - _offsetTimeX: 0
     - _offsetTimeY: 0
     m_Colors:

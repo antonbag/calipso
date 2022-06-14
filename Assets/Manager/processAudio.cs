@@ -13,6 +13,7 @@ public class processAudio : MonoBehaviour
                 public settingController sc;
                 public calipsoManager cm;
                 public micController mic;
+                public orbesManager om;
         }
 
 
@@ -21,6 +22,7 @@ public class processAudio : MonoBehaviour
         //control from settings. public to get it in real time from soundbarManager
         [Range(1, 1000)] public float powerMultiplier;
         public GameObject gmVolumeValue;
+
 
         [Space(20)]
 
@@ -102,9 +104,11 @@ public class processAudio : MonoBehaviour
         private int recordingRestCounter = 0;
         private int recordingMinimumCounter = 0;
 
-
         bool allowingRecording;
- 
+
+
+
+
 
         void Start()
         {
@@ -176,7 +180,7 @@ public class processAudio : MonoBehaviour
                 _numberOfSamples = _scripts.mic.checkSamplesRange();
 
                 ponderacionPOW = PlayerPrefsManager.GetSoundBias ();
-                recThreshold = PlayerPrefsManager.GetThreshold ();
+                recThreshold = PlayerPrefsManager.GetThreshold();
 
                 allowingRecording = PlayerPrefsManager.GetRecording ();    
 
@@ -215,8 +219,7 @@ public class processAudio : MonoBehaviour
                     */
                 }
                 
-                
-                
+               
          
         
                 //OPERANDO!
@@ -369,41 +372,49 @@ public class processAudio : MonoBehaviour
                         }
 
                         contadorF = 0;
-
- 
-                
                     }
 
       
                 }
    
 
-            }
 
-            //SUPERMAX
-            //calculo el volumen maximo con la media de todos los averageMax
-            float superMaxSuma = 0f;
-            for(int f = 0; f < averageMax.Length; f++){
-                superMaxSuma += averageMax[f];
-            }
-
-            
-            superMax = superMaxSuma/averageMax.Length;
-
-
-            currentVolume = GetCurrentVolume();
-
-
-
-            //START STOP RECORDING
-            if(currentVolume > 0.01f){
-                
-                if(!isRecording && (recordingRestCounter > recordingRestLimit)){
-                    isRecording = true;
-                    Debug.Log("voy a grabar!: " + currentVolume);
-                    recordingMinimumCounter = 0;
+                //SUPERMAX
+                //calculo el volumen maximo con la media de todos los averageMax
+                float superMaxSuma = 0f;
+                for(int f = 0; f < averageMax.Length; f++){
+                    superMaxSuma += averageMax[f];
                 }
+
+                
+                superMax = superMaxSuma/averageMax.Length;
+
+                //Recordatorio: esta multiplicado por 100
+                currentVolume = GetCurrentVolume();
+
+                //CURRENT VOLUME
+                gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = currentVolume.ToString();
+
+
+
+
+                //START STOP RECORDING
+                if(currentVolume >= recThreshold){
+
+                    if(!isRecording && (recordingRestCounter > recordingRestLimit)){
+                        isRecording = true;
+                        Debug.Log("voy a grabar!: " + currentVolume);
+                        recordingMinimumCounter = 0;
+                    }
+
+                }
+
+
+
+
             }
+
+
 
 
             
@@ -418,8 +429,7 @@ public class processAudio : MonoBehaviour
 
                 spectrumDataAnterior = spectrumData;
                 
-                //CURRENT VOLUME
-                gmVolumeValue.GetComponent<TMPro.TextMeshProUGUI>().text = currentVolume.ToString();
+
 
                 //AUTOVOLUME
                 if(PlayerPrefsManager.GetAutovolume()){
@@ -432,6 +442,12 @@ public class processAudio : MonoBehaviour
                         //PlayerPrefsManager.SetSensitivity(PlayerPrefsManager.GetSensitivity()-1.0f);
                     }
                 }
+
+                
+   
+                
+
+
 
 
                 /*******************************/
@@ -448,14 +464,19 @@ public class processAudio : MonoBehaviour
                 ave6 = new List<float>();
                 ave7 = new List<float>();
                 
+
+
+
+                //si permito grabar según las preferencias
                 if(allowingRecording){
-                
                     
                     recordingRestCounter++;
+
+
                     //si estoy grabando y no he llegado a la duracion maxima...
                     if(
                         isRecording && 
-                        (recordingCounter < recordingLimit)
+                        (recordingCounter <= recordingLimit)
                     ){
                         //Debug.Log("sigo grabando: "+ recordingCounter);
                         recordingCounter++;
@@ -467,7 +488,7 @@ public class processAudio : MonoBehaviour
                     if(
                         isRecording && 
                         (recordingCounter >= recordingLimit) && 
-                        (recordingMinimumCounter > recordingMinimum)
+                        (recordingMinimumCounter >= recordingMinimum)
                     ){
                         guardarClip();
                     }
@@ -476,9 +497,6 @@ public class processAudio : MonoBehaviour
                 //Debug.Log("recordingCounter: "+ recordingCounter+" recordingLimit: "+recordingLimit);
 
             }
-
-
-
 
         }
 
@@ -490,6 +508,7 @@ public class processAudio : MonoBehaviour
             isRecording = false;
             recordingCounter = 0;
             recordingRestCounter = 0;
+            _scripts.om.createOrbe();
         }
 
 

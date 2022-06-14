@@ -145,7 +145,7 @@ Transform:
   m_GameObject: {fileID: 6930317968468680688}
   m_LocalRotation: {x: -4.3297806e-17, y: 0.7071068, z: 0.7071068, w: -4.3297806e-17}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 0.862069, z: 1}
+  m_LocalScale: {x: 1, y: 0.862069, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2742729584811305155}
@@ -233,7 +233,7 @@ MonoBehaviour:
   zeta: 0
   scaleZOriginal: 0
   altoZ: 0.1
-  removeSoundClipEvery: 50000
+  removeSoundClipEvery: 5
   soundList: []
 --- !u!82 &584012787831700453
 AudioSource:
